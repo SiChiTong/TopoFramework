@@ -17,29 +17,81 @@
 namespace ime
 {
 
+// ADT's for building the graph.
+
+/**
+ * Every object in the graph is an instance of a Node class. But this node
+ * behaves differently according to its responsibilities.
+ */
+class Node
+{
+  public:
+    typedef std::vector<Node*> Nodes;
+    Nodes prevs;
+    Nodes nexts;
+    unsigned int value;
+    bool initialized;
+    bool computationNode;
+
+    Node() : value(0), initialized(false), computationNode(false) {}
+    virtual ~Node() {}
+    virtual unsigned int getValue() const { return value; }
+    virtual bool getInitialized()   const { return initialized; }
+    virtual const char* getName() const =0;
+};
+
+class Module : public ime::Node
+{
+  public: Module() : ime::Node() {}
+  public: virtual ~Module() {}
+  public: virtual void init() {}
+  public: virtual void execute() {}
+};
+
+class Representation: public ime::Node
+{
+  public: void (*update)(Node* , Node* );
+  public: Representation() : ime::Node(), update(0) {}
+  public: virtual ~Representation() {}
+};
+
+class TopoNode
+{
+  public:
+    virtual ~TopoNode() {}
+    virtual void init() =0;
+    virtual void update() =0;
+    virtual const Node* getNode() const =0;
+};
+
+class TopoModule : public ime::TopoNode
+{
+  public:
+    Module* module;
+    TopoModule(Module*  module) : module(module) {}
+    virtual ~TopoModule() {}
+    void init() { module->init(); }
+    void update() { module->execute(); }
+    const Node* getNode() const { return module; }
+};
+
+class TopoRepresentation: public ime::TopoNode
+{
+  public:
+    Module* module;
+    Representation* representation;
+    TopoRepresentation(Module* module, Representation* representation) : module(module), representation(representation) {}
+    virtual ~TopoRepresentation() {}
+    void init() {/** For later use */}
+    void update() { representation->update(module, representation); }
+    const Node* getNode() const { return representation; }
+};
+
+
+
 class Graph
 {
   public:
-
-    // Every object the graph is an instance of a Node. But this node behaves differently according
-    // to its responsibilities.
-    class Node
-    {
-      public:
-        typedef std::vector<Node*> Nodes;
-        Nodes prevs;
-        Nodes nexts;
-        unsigned int value;
-        bool initialized;
-        bool computationNode;
-
-        Node() : value(0), initialized(false), computationNode(false) {}
-        virtual ~Node() {}
-        virtual unsigned int getValue() { return value; }
-        virtual bool getInitialized() { return initialized; }
-        virtual const char* getName() const =0;
-    };
-
     class ModuleEntry
     {
       public:
@@ -52,10 +104,10 @@ class Graph
       public:
         std::string providedModuleName;
         Node* representationNode;
-        void (*updateRepresentation)(Node*, Node*);
+        void (*update)(Node*, Node*);
 
-        RepresentationEntry(std::string providedModuleName, Node* representationNode, void (*updateRepresentation)(Node*, Node*)) :
-            providedModuleName(providedModuleName), representationNode(representationNode), updateRepresentation(updateRepresentation) {}
+        RepresentationEntry(std::string providedModuleName, Node* representationNode, void (*update)(Node*, Node*)) :
+            providedModuleName(providedModuleName), representationNode(representationNode), update(update) {}
     };
 
     class ModuleRepresentationEntry
@@ -68,12 +120,12 @@ class Graph
           requiredModuleName(requiredModuleName), requiredRepresentationName(requiredRepresentationName) {}
     };
 
-    typedef std::vector<ModuleEntry*> ModulesVector;
+    typedef std::vector<ModuleEntry*> ModuleVector;
     typedef std::vector<RepresentationEntry*> RepresentationVector;
     typedef std::vector<ModuleRepresentationEntry*> ModuleRepresentationVector;
     typedef std::map<unsigned int, int> InDegreesMap;
     typedef std::map<unsigned int, Node*> GraphStructure;
-    ModulesVector modulesVector;
+    ModuleVector moduleVector;
     RepresentationVector representationVector;
     ModuleRepresentationVector moduleRepresentationVector;
     InDegreesMap inDegreesMap;
@@ -82,7 +134,7 @@ class Graph
 
     // For topological sort
     typedef std::queue<Node*> TopoQueue;
-    typedef std::vector<Node*> GraphOutput;
+    typedef std::vector<TopoNode*> GraphOutput;
     TopoQueue topoQueue;
     GraphOutput graphOutput;
 
@@ -123,7 +175,7 @@ class ModuleLoader
     ~ModuleLoader() { delete theInstance; }
 };
 
-template<const char* (*getModuleName)(), void (*updateRepresentation)(ime::Graph::Node*, ime::Graph::Node*), class T>
+template<const char* (*getModuleName)(), void (*updateRepresentation)(ime::Node*, ime::Node*), class T>
 class RepresentationProvider
 {
   public:
@@ -177,27 +229,12 @@ class RepresentationUser
 };
 
 
-class Module : public ime::Graph::Node
-{
-  public: Module() : ime::Graph::Node(){}
-  public: virtual ~Module() {}
-  public: virtual void init() {}
-  public: virtual void execute() {}
-};
-
-class Representation: public ime::Graph::Node
-{
-  public: void (*updateRepresentation)(Node* , Node* );
-  public: Representation() : ime::Graph::Node(), updateRepresentation(0) {}
-  public: virtual ~Representation() {}
-};
-
 // Macros to create the computational units as well as the representations that they provide.
 #define MODULE(NAME)                                                        \
 class NAME;                                                                 \
 class NAME##Base : public ime::Module                                       \
 {                                                                           \
-  private: typedef NAME##Base _this;                                        \
+  private: typedef NAME##Base _This;                                        \
   public: NAME##Base() : ime::Module() {}                                   \
   public: virtual ~NAME##Base() {}                                          \
   public: const char* getName() const { return #NAME ;}                     \
@@ -205,16 +242,16 @@ class NAME##Base : public ime::Module                                       \
 
 #define REQUIRES(REPRESENTATION)                                            \
 private: static const char* getRepresentation##REPRESENTATION() { return #REPRESENTATION ; }       \
-protected: ime::RepresentationRequierer<&_this::getNameStatic, &_this::getRepresentation##REPRESENTATION, REPRESENTATION> the##REPRESENTATION;      \
+protected: ime::RepresentationRequierer<&_This::getNameStatic, &_This::getRepresentation##REPRESENTATION, REPRESENTATION> the##REPRESENTATION;      \
 
 #define PROVIDES(REPRESENTATION)                                            \
 protected: virtual void update(REPRESENTATION& the##REPRESENTATION) =0;     \
-protected: static void _update##REPRESENTATION(ime::Graph::Node* moduleNode, ime::Graph::Node* representationNode)         \
-          { (((_this*) moduleNode)->update(*((REPRESENTATION*) representationNode))); } \
-protected: ime::RepresentationProvider<&_this::getNameStatic, &_this::_update##REPRESENTATION, REPRESENTATION> _the##REPRESENTATION##Provides; \
+protected: static void _update##REPRESENTATION(ime::Node* moduleNode, ime::Node* representationNode)         \
+          { (((_This*) moduleNode)->update(*((REPRESENTATION*) representationNode))); } \
+protected: ime::RepresentationProvider<&_This::getNameStatic, &_This::_update##REPRESENTATION, REPRESENTATION> _the##REPRESENTATION##Provides;      \
 
 #define USES(REPRESENTATION)                                               \
-protected: ime::RepresentationUser<&_this::getRepresentation##REPRESENTATION, REPRESENTATION> the##REPRESENTATION;      \
+protected: ime::RepresentationUser<&_This::getRepresentation##REPRESENTATION, REPRESENTATION> the##REPRESENTATION;                                  \
 
 #define END_MODULE };                                                      \
 
@@ -224,7 +261,7 @@ protected: ime::RepresentationUser<&_this::getRepresentation##REPRESENTATION, RE
 class NAME;                                                                 \
 class NAME##Base : public ime::Representation                               \
 {                                                                           \
-  private: typedef NAME##Base _this;                                        \
+  private: typedef NAME##Base _This;                                        \
   public: NAME##Base() : ime::Representation() {}                           \
   public: virtual ~NAME##Base() {}                                          \
   public: const char* getName() const { return #NAME ;}                     \
