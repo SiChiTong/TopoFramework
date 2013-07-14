@@ -1,14 +1,13 @@
 //============================================================================
-// Name        : PhD.cpp
+// Name        : Main.cpp
 // Author      : Sam Abeyruwan
 // Version     :
-// Copyright   : Your copyright notice
-// Description : Hello World in C, Ansi-style
+// Copyright   :
+// Description : Main class of the TopoFramework. This is an illustration.
 //============================================================================
 
 #include <stdio.h>
 #include <stdlib.h>
-
 #include "Framework.h"
 
 int main(void)
