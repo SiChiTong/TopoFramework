@@ -24,8 +24,8 @@ ime::Graph::Graph() :
 
 ime::Graph::~Graph()
 {
-  for (ime::Graph::ModuleVector::iterator iter = moduleVector.begin();
-      iter != moduleVector.end(); ++iter)
+  for (ime::Graph::ModuleVector::iterator iter = moduleVector.begin(); iter != moduleVector.end();
+      ++iter)
     delete *iter;
   for (ime::Graph::RepresentationVector::iterator iter = representationVector.begin();
       iter != representationVector.end(); ++iter)
@@ -121,8 +121,8 @@ ime::Node* ime::Graph::getRepresentation(const char* representationName)
 void ime::Graph::computeGraph()
 {
   // 1) Add modules
-  for (ime::Graph::ModuleVector::iterator iter = moduleVector.begin();
-      iter != moduleVector.end(); ++iter)
+  for (ime::Graph::ModuleVector::iterator iter = moduleVector.begin(); iter != moduleVector.end();
+      ++iter)
   {
     ime::Graph::ModuleEntry* moduleEntry = *iter;
     graphStructure.insert(
@@ -219,7 +219,7 @@ void ime::Graph::topoSort()
     if (x->computationNode)
       topoNode = new TopoModule((Module*) x);
     else
-      topoNode = new TopoRepresentation(((Module*)*(x->prevs.begin())), (Representation*) x);
+      topoNode = new TopoRepresentation(((Module*) *(x->prevs.begin())), (Representation*) x);
 
     if (x->initialized)
     {
@@ -323,45 +323,54 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
 
   // Graphviz output
   out << std::endl << std::endl;
-  out << "digraph G {\n";
-  out << "\t node [shape=box, color=lightblue2, style=filled]; ";
-  for (ime::Graph::GraphOutput::const_iterator iter = that.graphOutput.begin();
-      iter != that.graphOutput.end(); ++iter)
+  out.flush();
+  std::ofstream graph("graph_structure.dot");
+  if (graph.is_open())
   {
-    const ime::Node* x = (*iter)->getNode();
-    if (x->computationNode)
-      out << " " << x->getName() << "; ";
-  }
-  out << "\n";
-  out << "\t node [shape=ellipse, color=lightpink, style=filled]; ";
-  for (ime::Graph::GraphOutput::const_iterator iter = that.graphOutput.begin();
-      iter != that.graphOutput.end(); ++iter)
-  {
-    const ime::Node* x = (*iter)->getNode();
-    if (!x->computationNode)
-      out << " " << x->getName() << "; ";
-  }
-  out << "\n";
-  for (ime::Graph::GraphOutput::const_iterator iter = that.graphOutput.begin();
-      iter != that.graphOutput.end(); ++iter)
-  {
-    const ime::Node* x = (*iter)->getNode();
-    if (!x->nexts.empty())
+    graph << "digraph G {\n";
+    graph << "\t node [shape=box, color=lightblue2, style=filled]; ";
+    for (ime::Graph::GraphOutput::const_iterator iter = that.graphOutput.begin();
+        iter != that.graphOutput.end(); ++iter)
     {
-      for (ime::Node::Nodes::const_iterator j = x->nexts.begin(); j != x->nexts.end(); ++j)
+      const ime::Node* x = (*iter)->getNode();
+      if (x->computationNode)
+        graph << " " << x->getName() << "; ";
+    }
+    graph << "\n";
+    graph << "\t node [shape=ellipse, color=lightpink, style=filled]; ";
+    for (ime::Graph::GraphOutput::const_iterator iter = that.graphOutput.begin();
+        iter != that.graphOutput.end(); ++iter)
+    {
+      const ime::Node* x = (*iter)->getNode();
+      if (!x->computationNode)
+        graph << " " << x->getName() << "; ";
+    }
+    graph << "\n";
+    for (ime::Graph::GraphOutput::const_iterator iter = that.graphOutput.begin();
+        iter != that.graphOutput.end(); ++iter)
+    {
+      const ime::Node* x = (*iter)->getNode();
+      if (!x->nexts.empty())
       {
-        ime::Node* y = *j;
-        out << "\t" << x->getName() << " -> " << y->getName() << "; \n";
+        for (ime::Node::Nodes::const_iterator j = x->nexts.begin(); j != x->nexts.end(); ++j)
+        {
+          ime::Node* y = *j;
+          graph << "\t" << x->getName() << " -> " << y->getName() << "; \n";
+        }
+      }
+      else
+      {
+        graph << "\t" << x->getName() << "; \n";
       }
     }
-    else
-    {
-      out << "\t" << x->getName() << "; \n";
-    }
+    graph << "\t fontsize=20; \n";
+    graph << "} \n";
+    graph.close();
   }
-  out << "\t fontsize=20; \n";
-  out << "} \n";
-
+  else
+  {
+    std::cerr << "ERROR! unable to open the graph_structure.dot file" << std::endl;
+  }
   return out;
 }
 
