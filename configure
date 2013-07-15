@@ -21,7 +21,7 @@ optional_cflags="-I. -I./modules -I./representations -Wall -O3 -g"
 optional_lflags=""
 
 builddir="./build"
-bin="./MainTopoFramework"
+bin="./bin/MainTopoFramework"
 
 #----------------------------------------
 #command line arguments
