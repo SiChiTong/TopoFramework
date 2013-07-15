@@ -9,16 +9,27 @@
 #define OUTPUTMODULE_H_
 
 #include "kernel/Framework.h"
-#include "representations/rcss/JointValues.h"
+#include "representations/motion/JointRequestWithSpeeds.h"
+#include "representations/rcss/SayMessage.h"
+#include "representations/rcss/BeamRequest.h"
+#include <sstream>
 
 MODULE(OutputModule)
-REQUIRES(OutputJointValues)
+  REQUIRES(JointRequestWithSpeeds)
+  REQUIRES(SayMessage)
+  REQUIRES(BeamRequest)
 END_MODULE
 
 class OutputModule: public OutputModuleBase
 {
   public:
     void execute();
+
+  private:
+    void createJointMessage(std::stringstream &stream);
+    void createSayMessage(std::stringstream &stream);
+    void createBeamMessage(std::stringstream &stream);
+
 };
 
 #endif /* OUTPUTMODULE_H_ */

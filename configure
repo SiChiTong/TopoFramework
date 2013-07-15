@@ -146,12 +146,12 @@ fi
 
 #create subdirectories
 echo Creating build directory...
-allcpp=`find . -name \*.cpp | cut -c3- | grep -E -v "$ignore" | xargs`
+allcxx=`find . -name \*.cpp -o -name \*.c | cut -c3- | grep -E -v "$ignore" | xargs`
 if [ ! -d "$builddir" ]
 then
   mkdir -p $builddir
 fi
-for cppfile in $allcpp
+for cppfile in $allcxx
 do
   d=$builddir/`dirname $cppfile`
   if [ ! -d "$d" ]
@@ -163,7 +163,7 @@ done
 
 #create object list
 allobj=""
-allsrc="$generatedfiles $allcpp"
+allsrc="$generatedfiles $allcxx"
 for srcfile in $allsrc
 do
   object="$builddir/`dirname $srcfile`/`basename $srcfile | sed 's/\.[^\.]*$//'`.o"

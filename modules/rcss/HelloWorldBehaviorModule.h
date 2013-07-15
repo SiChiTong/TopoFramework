@@ -9,18 +9,25 @@
 #define HELLOWORLDBEHAVIORMODULE_H_
 
 #include "kernel/Framework.h"
-#include "representations/rcss/JointValues.h"
+#include "representations/perception/JointData.h"
+#include "representations/motion/JointRequestWithSpeeds.h"
+#include "representations/rcss/SayMessage.h"
+#include "representations/rcss/BeamRequest.h"
 
 MODULE(HelloWorldBehaviorModule)
-REQUIRES(InputJointValues)
-PROVIDES(OutputJointValues)
+  REQUIRES(JointData)
+  PROVIDES(JointRequestWithSpeeds)
+  PROVIDES(SayMessage)
+  PROVIDES(BeamRequest)
 END_MODULE
 
 class HelloWorldBehaviorModule: public HelloWorldBehaviorModuleBase
 {
   public:
     HelloWorldBehaviorModule();
-    void update(OutputJointValues& theOutputJointValues);
+    void update(JointRequestWithSpeeds& theJointRequestWithSpeeds);
+    void update(SayMessage& theSayMessage);
+    void update(BeamRequest& theBeamRequest);
 
   protected:
     enum eState

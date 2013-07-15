@@ -9,10 +9,12 @@
 #define INPUTMODULE_H_
 
 #include "kernel/Framework.h"
-#include "representations/rcss/JointValues.h"
+#include "representations/rcss/ServerMessage.h"
+
+#include "utils/com/Communication.h"
 
 MODULE(InputModule)
-PROVIDES(InputJointValues)
+  PROVIDES(ServerMessage)
 END_MODULE
 
 class InputModule: public InputModuleBase
@@ -21,11 +23,7 @@ class InputModule: public InputModuleBase
     InputModule();
     ~InputModule();
     void init();
-    void update(InputJointValues& theInputJointValues);
-
-  private:
-    bool connected;
-    std::string msg;
+    void update(ServerMessage& theServerMessage);
 };
 
 #endif /* INPUTMODULE_H_ */

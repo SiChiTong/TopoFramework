@@ -13,6 +13,7 @@
 #include <map>
 #include <queue>
 #include <string>
+#include <stdint.h>
 
 namespace ime
 {
@@ -53,6 +54,7 @@ class Representation: public ime::Node
   public: void (*update)(Node* , Node* );
   public: Representation() : ime::Node(), update(0) {}
   public: virtual ~Representation() {}
+  public: virtual void draw() const {}
 };
 
 class TopoNode
