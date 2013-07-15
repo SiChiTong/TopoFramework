@@ -9,7 +9,7 @@
 #define TESTONEMODULE_H_
 
 #include "Framework.h"
-#include "representations/TestOneRepresentation.h"
+#include "representations/test/TestOneRepresentation.h"
 
 MODULE(TestOneModule)
 PROVIDES(TestOneRepresentation)

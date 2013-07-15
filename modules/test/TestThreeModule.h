@@ -9,9 +9,9 @@
 #define TESTTHREEMODULE_H_
 
 #include "Framework.h"
-#include "representations/TestOneRepresentation.h"
-#include "representations/TestTwoRepresentation.h"
-#include "representations/TestThreeRepresentation.h"
+#include "representations/test/TestOneRepresentation.h"
+#include "representations/test/TestTwoRepresentation.h"
+#include "representations/test/TestThreeRepresentation.h"
 
 MODULE(TestThreeModule)
 REQUIRES(TestOneRepresentation)
