@@ -8,7 +8,7 @@
 #ifndef TESTONEMODULE_H_
 #define TESTONEMODULE_H_
 
-#include "Framework.h"
+#include "kernel/Framework.h"
 #include "representations/test/TestOneRepresentation.h"
 
 MODULE(TestOneModule)

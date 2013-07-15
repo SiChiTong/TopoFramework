@@ -8,7 +8,7 @@
 #ifndef TESTTWOMODULE_H_
 #define TESTTWOMODULE_H_
 
-#include "Framework.h"
+#include "kernel/Framework.h"
 #include "representations/test/TestOneRepresentation.h"
 #include "representations/test/TestTwoRepresentation.h"
 #include "representations/test/TestThreeRepresentation.h"

@@ -8,7 +8,7 @@
 #ifndef TESTTHREEREPRESENTATION_H_
 #define TESTTHREEREPRESENTATION_H_
 
-#include "Framework.h"
+#include "kernel/Framework.h"
 
 REPRESENTATION(TestThreeRepresentation)
 class TestThreeRepresentation: public TestThreeRepresentationBase

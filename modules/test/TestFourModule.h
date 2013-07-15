@@ -8,7 +8,7 @@
 #ifndef TESTFOURMODULE_H_
 #define TESTFOURMODULE_H_
 
-#include "Framework.h"
+#include "kernel/Framework.h"
 
 MODULE(TestFourModule)
 END_MODULE
