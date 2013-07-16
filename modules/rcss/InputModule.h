@@ -9,9 +9,8 @@
 #define INPUTMODULE_H_
 
 #include "kernel/Framework.h"
+#include "kernel/Communication.h"
 #include "representations/rcss/ServerMessage.h"
-
-#include "utils/com/Communication.h"
 
 MODULE(InputModule)
   PROVIDES(ServerMessage)

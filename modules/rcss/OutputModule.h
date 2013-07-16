@@ -9,6 +9,7 @@
 #define OUTPUTMODULE_H_
 
 #include "kernel/Framework.h"
+#include "kernel/Communication.h"
 #include "representations/motion/JointRequestWithSpeeds.h"
 #include "representations/rcss/SayMessage.h"
 #include "representations/rcss/BeamRequest.h"

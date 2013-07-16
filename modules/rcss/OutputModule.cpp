@@ -6,7 +6,6 @@
  */
 
 #include "OutputModule.h"
-#include "utils/com/Communication.h"
 
 void OutputModule::execute()
 {
