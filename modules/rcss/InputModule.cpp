@@ -10,7 +10,8 @@
 
 #include "InputModule.h"
 
-InputModule::InputModule()
+InputModule::InputModule() :
+    connected(false)
 {
 }
 
@@ -19,27 +20,24 @@ InputModule::~InputModule()
   ime::Communication::deleteInstance();
 }
 
-void InputModule::init()
-{
-  // Established connection.
-  // fixMe: get these values from a config
-  std::string gHost = "127.0.0.1";
-  int gPort = 3100;
-  std::string msg;
-  std::string msgNao = "(scene rsg/agent/nao/nao.rsg)";
-  ime::Communication& com = ime::Communication::getInstance();
-  com.initInstance(gHost, gPort);
-  com.putMessage(msgNao);
-  com.getMessage(msg);
-  std::string msgInit = "(init (unum 0)(teamname NaoRobot))(syn)";
-  com.putMessage(msgInit);
-
-}
-
 void InputModule::update(ServerMessage& theServerMessage)
 {
+  if (!connected)
+  {
+    std::string msg;
+    std::string msgNao = config.getValue("rcssAgent", std::string("(scene rsg/agent/nao/nao.rsg)"));
+    ime::Communication& com = ime::Communication::getInstance();
+    com.initInstance(config.getValue("rcssHost", std::string("127.0.0.1")), config.getValue("rcssPort", 3100));
+    com.putMessage(msgNao);
+    com.getMessage(msg);
+    std::string msgInit = config.getValue("rcssTeam", std::string("(init (unum 0)(teamname NaoRobot))(syn)"));
+    com.putMessage(msgInit);
+    connected = true;
+  }
   ime::Communication& com = ime::Communication::getInstance();
   com.getMessage(theServerMessage.msg);
+
+  std::cout << theServerMessage.msg << std::endl;
 }
 
 MAKE_MODULE(InputModule)

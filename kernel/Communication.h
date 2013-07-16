@@ -22,6 +22,7 @@ class Communication
 {
   protected:
     rcss::net::TCPSocket gSocket;
+    bool connected;
 
   public:
     static Communication& getInstance();

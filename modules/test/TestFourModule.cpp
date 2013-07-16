@@ -9,12 +9,12 @@
 
 void TestFourModule::init()
 {
-  std::cout << "TestFourModule::init" << std::endl;
+  //std::cout << "TestFourModule::init" << std::endl;
 }
 
 void TestFourModule::execute()
 {
-  std::cout << "TestFourModule::execute" << std::endl;
+  //std::cout << "TestFourModule::execute" << std::endl;
 }
 
 MAKE_MODULE(TestFourModule)

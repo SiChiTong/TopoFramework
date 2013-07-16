@@ -21,8 +21,10 @@ class InputModule: public InputModuleBase
   public:
     InputModule();
     ~InputModule();
-    void init();
     void update(ServerMessage& theServerMessage);
+
+  private:
+    bool connected;
 };
 
 #endif /* INPUTMODULE_H_ */

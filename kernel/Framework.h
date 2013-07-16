@@ -8,6 +8,7 @@
 #ifndef FRAMEWORK_H_
 #define FRAMEWORK_H_
 
+#include "Config.h"
 #include <iostream>
 #include <vector>
 #include <map>
@@ -47,6 +48,7 @@ class Module : public ime::Node
   public: virtual ~Module() {}
   public: virtual void init() {}
   public: virtual void execute() {}
+  public: ime::Config config;
 };
 
 class Representation: public ime::Node
@@ -61,8 +63,9 @@ class TopoNode
 {
   public:
     virtual ~TopoNode() {}
-    virtual void init() =0;
+    virtual void allocate() =0;
     virtual void update() =0;
+    virtual void release() =0;
     virtual const Node* getNode() const =0;
 };
 
@@ -72,8 +75,15 @@ class TopoModule : public ime::TopoNode
     Module* module;
     TopoModule(Module*  module) : module(module) {}
     virtual ~TopoModule() {}
-    void init() { module->init(); }
+    void allocate()
+    {
+      module->config.setName(module->getName());
+      module->config.setPath("config");
+      module->config.resurrect();
+      module->init();
+    }
     void update() { module->execute(); }
+    void release() { module->config.persist(); }
     const Node* getNode() const { return module; }
 };
 
@@ -84,7 +94,8 @@ class TopoRepresentation: public ime::TopoNode
     Representation* representation;
     TopoRepresentation(Module* module, Representation* representation) : module(module), representation(representation) {}
     virtual ~TopoRepresentation() {}
-    void init() {/** For later use */}
+    void allocate() {/** For later use */}
+    void release()  {/** For later use */}
     void update() { representation->update(module, representation); }
     const Node* getNode() const { return representation; }
 };
@@ -150,8 +161,9 @@ class Graph
     /** Computational resources */
     void computeGraph();
     void topoSort();
-    void graphOutputInitialize();
+    void graphOutputAllocate();
     void graphOutputUpdate();
+    void graphOutputRelease();
 
   protected:
     Graph();

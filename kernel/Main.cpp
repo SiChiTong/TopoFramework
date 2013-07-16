@@ -9,17 +9,18 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "Framework.h"
+#include "kernel/Framework.h"
 
 #include "utils/sexpr/sexp.h"
 #include "utils/sexpr/sexp_ops.h"
+#include "kernel/Config.h"
 #include <string.h>
 
 // bool to indicate whether to continue the agent mainloop
 static bool gLoop = true;
 
 // SIGINT handler prototype
-extern "C" void handler(int sig)
+void topoHandler(int sig)
 {
   if (sig == SIGINT)
     gLoop = false;
@@ -52,6 +53,43 @@ void sexprTest()
   }
 }
 
+void testConfig()
+{
+  ime::Config config("test.cfg", "");
+  config.resurrect();
+
+  int testInit = config.getValue("testInit", 10);
+  double testDouble = config.getValue("testDouble", 12.0);
+  bool testBool = config.getValue("testBool", true);
+  std::string testString = config.getValue("testString", std::string("Topo"));
+
+  std::cout << testInit << " " << testDouble << " " << testBool << " " << testString << std::endl;
+
+  config.persist();
+}
+
+void topoSignal()
+{
+  struct sigaction topoSigIntHandler;
+
+  topoSigIntHandler.sa_handler = topoHandler;
+  sigemptyset(&topoSigIntHandler.sa_mask);
+  topoSigIntHandler.sa_flags = 0;
+
+  sigaction(SIGINT, &topoSigIntHandler, NULL);
+}
+
+void topoLoop()
+{
+  ime::Graph& graph = ime::Graph::getInstance();
+  graph.graphOutputAllocate();
+  while (gLoop)
+  {
+    graph.graphOutputUpdate();
+  }
+  graph.graphOutputRelease();
+}
+
 int main(int argc, char** argv)
 {
   std::cout << "*** starts " << std::endl;
@@ -59,13 +97,10 @@ int main(int argc, char** argv)
   ime::Graph& graph = ime::Graph::getInstance();
   graph.computeGraph();
   graph.topoSort();
-  std::cout << graph << std::endl;
+  //std::cout << graph << std::endl;
+  topoSignal();
+  topoLoop();
 
-  graph.graphOutputInitialize();
-  while (gLoop)
-  {
-    graph.graphOutputUpdate();
-  }
   ime::Graph::deleteInstance();
 
   std::cout << "*** ends   " << std::endl;

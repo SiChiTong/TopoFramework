@@ -242,15 +242,26 @@ void ime::Graph::topoSort()
   assert(graphOutput.size() == graphStructure.size());
 }
 
-void ime::Graph::graphOutputInitialize()
+void ime::Graph::graphOutputAllocate()
 {
-  // 1) Initialize
+  // 1) Allocate
   for (ime::Graph::GraphOutput::iterator iter = graphOutput.begin(); iter != graphOutput.end(); ++iter)
   {
     // 1) Init()
-    (*iter)->init();
+    (*iter)->allocate();
   }
 }
+
+void ime::Graph::graphOutputRelease()
+{
+  // 3) Release
+  for (ime::Graph::GraphOutput::iterator iter = graphOutput.begin(); iter != graphOutput.end(); ++iter)
+  {
+    // 3) Release()
+    (*iter)->release();
+  }
+}
+
 
 void ime::Graph::graphOutputUpdate()
 {

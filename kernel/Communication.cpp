@@ -24,7 +24,8 @@ using std::cerr;
 
 Communication* Communication::instance = 0;
 
-Communication::Communication()
+Communication::Communication() :
+    connected(false)
 {
 }
 
