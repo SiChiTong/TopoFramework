@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-                          udpsocket.hpp  -  A simple udp socket class
-                             -------------------
-    begin                : 08-JAN-2003
-    copyright            : (C) 2003 by The RoboCup Soccer Server 
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ udpsocket.hpp  -  A simple udp socket class
+ -------------------
+ begin                : 08-JAN-2003
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,7 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #ifndef RCSS_NET_UDPSOCKET_HPP
 #define RCSS_NET_UDPSOCKET_HPP
 
@@ -26,22 +25,21 @@
 
 namespace rcss
 {
-    namespace net
-    {
-        class UDPSocket
-            : public Socket
-        {
-        public:
-            UDPSocket();
-            UDPSocket( SocketDesc& s );
-            UDPSocket( const Addr& addr );
-            UDPSocket( const Addr& addr, const Addr& dest );
+namespace net
+{
+class UDPSocket: public Socket
+{
+  public:
+    UDPSocket();
+    UDPSocket(SocketDesc& s);
+    UDPSocket(const Addr& addr);
+    UDPSocket(const Addr& addr, const Addr& dest);
 
-        private:
-            bool
-            doOpen( SocketDesc& fd );
-        };
-    }
+  private:
+    bool
+    doOpen(SocketDesc& fd);
+};
+}
 }
 
 #endif

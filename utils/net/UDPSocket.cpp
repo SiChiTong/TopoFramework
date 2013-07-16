@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-                          udpsocket.cpp  -  A simple udp socket class
-                             -------------------
-    begin                : 08-JAN-2003
-    copyright            : (C) 2003 by The RoboCup Soccer Server 
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ udpsocket.cpp  -  A simple udp socket class
+ -------------------
+ begin                : 08-JAN-2003
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -33,36 +33,36 @@
 
 namespace rcss
 {
-    namespace net
-    {
-        UDPSocket::UDPSocket()
-        {
-            open();
-        }
+namespace net
+{
+UDPSocket::UDPSocket()
+{
+  open();
+}
 
-        UDPSocket::UDPSocket( SocketDesc& s )
-            : Socket( s )
-        {}
+UDPSocket::UDPSocket(SocketDesc& s) :
+    Socket(s)
+{
+}
 
-        UDPSocket::UDPSocket( const Addr& addr )
-        {
-            open();
-            bind( addr );
-        }
+UDPSocket::UDPSocket(const Addr& addr)
+{
+  open();
+  bind(addr);
+}
 
-        UDPSocket::UDPSocket( const Addr& addr, const Addr& dest )
-        {
-            open();
-			bind( addr );
-            connect( dest );
-        }
-        
-        bool
-        UDPSocket::doOpen( SocketDesc& fd )
-        {
-            close();
-            fd = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP );
-            return fd >= 0;
-        }
-    }
+UDPSocket::UDPSocket(const Addr& addr, const Addr& dest)
+{
+  open();
+  bind(addr);
+  connect(dest);
+}
+
+bool UDPSocket::doOpen(SocketDesc& fd)
+{
+  close();
+  fd = ::socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
+  return fd >= 0;
+}
+}
 }

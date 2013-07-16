@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-                          addr.hpp  - A network address class
-                             -------------------
-    begin                : 07-JAN-2003
-    copyright            : (C) 2003 by The RoboCup Soccer Server 
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ addr.hpp  - A network address class
+ -------------------
+ begin                : 07-JAN-2003
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,68 +27,67 @@ struct sockaddr_in;
 
 namespace rcss
 {
-    namespace net
+namespace net
+{
+class AddrImpl;
+
+class Addr
+{
+  public:
+    typedef unsigned short int PortType;
+    typedef unsigned int HostType;
+    typedef struct sockaddr_in AddrType;
+
+    enum Error
     {
-        class AddrImpl;
-        
-        class Addr
-        {
-        public:
-            typedef unsigned short int PortType;
-            typedef unsigned int HostType;
-            typedef struct sockaddr_in AddrType;
+      eADDR_OK, eSERV_NOT_FOUND, eHOST_NOT_FOUND
+    };
 
-            enum Error { eADDR_OK, eSERV_NOT_FOUND, eHOST_NOT_FOUND };
+    static const HostType BROADCAST;
+    static const HostType ANY;
 
-            static const HostType BROADCAST;
-            static const HostType ANY;
-            
-            Addr( PortType port = 0, HostType host = Addr::ANY );
-            Addr( PortType port, const std::string& host );
-            Addr( const AddrType& addr );
-            ~Addr();
-            
-			bool setPort( PortType port = 0 );
-			bool setPort( const std::string& port, 
-                          const std::string& proto = "" );
+    Addr(PortType port = 0, HostType host = Addr::ANY);
+    Addr(PortType port, const std::string& host);
+    Addr(const AddrType& addr);
+    ~Addr();
 
-            bool setHost( HostType host = Addr::ANY );
-            bool setHost( const std::string& host );
-           
-            const AddrType&
-            getAddr() const;
-            
-            PortType
-            getPort() const;
-            
-            HostType
-            getHost() const;
-            
-            std::string
-            getHostStr() const;
+    bool setPort(PortType port = 0);
+    bool setPort(const std::string& port, const std::string& proto = "");
 
-			std::string
-			getPortStr( const std::string& proto = "" ) const;
-			
-		private:
-            AddrImpl* m_impl;
-        };
-        
-		bool
-        operator ==( const Addr& a,
-                    const Addr& b );
-        
-		bool
-        operator !=( const Addr& a,
-                    const Addr& b );
+    bool setHost(HostType host = Addr::ANY);
+    bool setHost(const std::string& host);
 
-        bool
-        operator < ( const Addr& a,
-                    const Addr& b );
-					
-		std::ostream&
-        operator<<( std::ostream& o, const Addr& addr );
-    }
+    const AddrType&
+    getAddr() const;
+
+    PortType
+    getPort() const;
+
+    HostType
+    getHost() const;
+
+    std::string
+    getHostStr() const;
+
+    std::string
+    getPortStr(const std::string& proto = "") const;
+
+  private:
+    AddrImpl* m_impl;
+};
+
+bool
+operator ==(const Addr& a, const Addr& b);
+
+bool
+operator !=(const Addr& a, const Addr& b);
+
+bool
+operator <(const Addr& a, const Addr& b);
+
+std::ostream&
+operator<<(std::ostream& o, const Addr& addr);
+}
 }
 
 #endif

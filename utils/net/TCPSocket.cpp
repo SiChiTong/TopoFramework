@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-                          tcpsocket.cpp  -  A simple tcp socket class
-                             -------------------
-    begin                : 08-JAN-2003
-    copyright            : (C) 2003 by The RoboCup Soccer Server
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ tcpsocket.cpp  -  A simple tcp socket class
+ -------------------
+ begin                : 08-JAN-2003
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -33,36 +33,36 @@
 
 namespace rcss
 {
-    namespace net
-    {
-        TCPSocket::TCPSocket()
-        {
-            open();
-        }
+namespace net
+{
+TCPSocket::TCPSocket()
+{
+  open();
+}
 
-        TCPSocket::TCPSocket( SocketDesc& s )
-            : Socket( s )
-        {}
+TCPSocket::TCPSocket(SocketDesc& s) :
+    Socket(s)
+{
+}
 
-        TCPSocket::TCPSocket( const Addr& addr )
-        {
-            open();
-            bind( addr );
-        }
+TCPSocket::TCPSocket(const Addr& addr)
+{
+  open();
+  bind(addr);
+}
 
-        TCPSocket::TCPSocket( const Addr& addr, const Addr& dest )
-        {
-            open();
-                        bind( addr );
-            connect( dest );
-        }
+TCPSocket::TCPSocket(const Addr& addr, const Addr& dest)
+{
+  open();
+  bind(addr);
+  connect(dest);
+}
 
-        bool
-        TCPSocket::doOpen( SocketDesc& fd )
-        {
-            close();
-            fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP );
-            return fd >= 0;
-        }
-    }
+bool TCPSocket::doOpen(SocketDesc& fd)
+{
+  close();
+  fd = ::socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
+  return fd >= 0;
+}
+}
 }

@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-                          tcpsocket.hpp  -  A simple tcp socket class
-                             -------------------
-    begin                : 2003-11-11
-    copyright            : (C) 2003 by The RoboCup Soccer Server
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ tcpsocket.hpp  -  A simple tcp socket class
+ -------------------
+ begin                : 2003-11-11
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -18,7 +18,6 @@
  *                                                                         *
  ***************************************************************************/
 
-
 #ifndef RCSS_NET_TCPSOCKET_HPP
 #define RCSS_NET_TCPSOCKET_HPP
 
@@ -26,22 +25,21 @@
 
 namespace rcss
 {
-    namespace net
-    {
-        class TCPSocket
-            : public Socket
-        {
-        public:
-            TCPSocket();
-            TCPSocket( SocketDesc& s );
-            TCPSocket( const Addr& addr );
-            TCPSocket( const Addr& addr, const Addr& dest );
+namespace net
+{
+class TCPSocket: public Socket
+{
+  public:
+    TCPSocket();
+    TCPSocket(SocketDesc& s);
+    TCPSocket(const Addr& addr);
+    TCPSocket(const Addr& addr, const Addr& dest);
 
-        private:
-            bool
-            doOpen( SocketDesc& fd );
-        };
-    }
+  private:
+    bool
+    doOpen(SocketDesc& fd);
+};
+}
 }
 
 #endif

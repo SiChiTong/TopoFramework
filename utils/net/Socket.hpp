@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-               socket.hpp  -  Base newtork socket class
-                             -------------------
-    begin                : 08-JAN-2003
-    copyright            : (C) 2003 by The RoboCup Soccer Server
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ socket.hpp  -  Base newtork socket class
+ -------------------
+ begin                : 08-JAN-2003
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -29,113 +29,102 @@
 
 namespace rcss
 {
-    namespace net
-    {
-                class Handler;
+namespace net
+{
+class Handler;
 
-        class Socket
-        {
-        public:
+class Socket
+{
+  public:
 #ifdef HAVE_SOCKETTYPE
-                        typedef SOCKET SocketDesc;
+    typedef SOCKET SocketDesc;
 #else
-                        typedef int SocketDesc;
+    typedef int SocketDesc;
 #endif
 
-                        static const SocketDesc INVALIDSOCKET;
+    static const SocketDesc INVALIDSOCKET;
 
-            enum CheckingType { CHECK, DONT_CHECK };
+    enum CheckingType
+    {
+      CHECK, DONT_CHECK
+    };
 
-                public:
-            static
-            void
-            closeFD( SocketDesc* s );
+  public:
+    static
+    void
+    closeFD(SocketDesc* s);
 
-            Socket();
+    Socket();
 
-            Socket( SocketDesc s );
+    Socket(SocketDesc s);
 
-            virtual
-            ~Socket();
+    virtual
+    ~Socket();
 
-            bool
-            open();
+    bool
+    open();
 
-            bool
-            bind( const Addr& addr );
+    bool
+    bind(const Addr& addr);
 
-            Addr
-            getName() const;
+    Addr
+    getName() const;
 
-            bool
-            connect( const Addr& addr );
+    bool
+    connect(const Addr& addr);
 
-            Addr
-            getPeer() const;
+    Addr
+    getPeer() const;
 
-            void
-            close();
+    void
+    close();
 
-            int
-            setCloseOnExec( bool on = true );
+    int
+    setCloseOnExec(bool on = true);
 
-            int
-            setNonBlocking( bool on = true );
+    int
+    setNonBlocking(bool on = true);
 
-            int
-            setAsync( bool on = true );
+    int
+    setAsync(bool on = true);
 
-            int
-            setBroadcast( bool on = true );
+    int
+    setBroadcast(bool on = true);
 
-            int
-            setReuseAddr( bool on = true );
+    int
+    setReuseAddr(bool on = true);
 
-            SocketDesc
-            getFD() const;
+    SocketDesc
+    getFD() const;
 
-            bool
-            isOpen() const;
+    bool
+    isOpen() const;
 
-            bool
-            isConnected() const;
+    bool
+    isConnected() const;
 
-            Addr
-            getDest() const; // deprecated.  Use getPeer instead.
+    Addr
+    getDest() const; // deprecated.  Use getPeer instead.
 
-            int
-            send( const char* msg,
-                  size_t len,
-                  const Addr& dest,
-                  int flags = 0,
-                  CheckingType check = CHECK );
+    int
+    send(const char* msg, size_t len, const Addr& dest, int flags = 0, CheckingType check = CHECK);
 
-            int
-            send( const char* msg,
-                  size_t len,
-                  int flags = 0,
-                  CheckingType check = CHECK );
+    int
+    send(const char* msg, size_t len, int flags = 0, CheckingType check = CHECK);
 
-            int
-            recv( char* msg,
-                  size_t len,
-                  Addr& from,
-                  int flags = 0,
-                  CheckingType check = CHECK );
+    int
+    recv(char* msg, size_t len, Addr& from, int flags = 0, CheckingType check = CHECK);
 
-            int
-            recv( char* msg,
-                  size_t len,
-                  int flags = 0,
-                  CheckingType check = CHECK );
+    int
+    recv(char* msg, size_t len, int flags = 0, CheckingType check = CHECK);
 
-            bool
-            accept( Socket& sock );
-            
-            Socket* accept(Addr& addr);
+    bool
+    accept(Socket& sock);
 
-            bool
-            listen( int backlog );
+    Socket* accept(Addr& addr);
+
+    bool
+    listen(int backlog);
 
     // The following two methods allow a timeout to be specified.
     // Overall, it's slower than the untimed varients so if you do
@@ -143,29 +132,22 @@ namespace rcss
     // block or not to block, then you are better off setting the
     // socket to blocking or non-blocking and using the version
     // without timeouts.
-            int
-            recv( int timeout,
-                  char* msg,
-                  size_t len,
-                  Addr& from,
-                  int flags = 0 );
+    int
+    recv(int timeout, char* msg, size_t len, Addr& from, int flags = 0);
 
-            int
-            recv( int timeout,
-                  char* msg,
-                  size_t len,
-                  int flags = 0 );
+    int
+    recv(int timeout, char* msg, size_t len, int flags = 0);
 
-        private:
-            virtual
-            bool
-            doOpen( SocketDesc& fd ) = 0;
+  private:
+    virtual
+    bool
+    doOpen(SocketDesc& fd) = 0;
 
-        private:
-                        Handler* m_handler;
-                        SocketDesc* m_handle;
-        };
-    }
+  private:
+    Handler* m_handler;
+    SocketDesc* m_handle;
+};
+}
 }
 
 #endif

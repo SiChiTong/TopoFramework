@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-                  isocketstream.hpp  -  An istream for sockets
-                             -------------------
-    begin                : 08-JAN-2003
-    copyright            : (C) 2003 by The RoboCup Soccer Server 
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ isocketstream.hpp  -  An istream for sockets
+ -------------------
+ begin                : 08-JAN-2003
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -25,34 +25,27 @@
 
 namespace rcss
 {
-    namespace net
+namespace net
+{
+class ISocketStream: public SocketStreamBuf, public std::istream
+{
+  public:
+    ISocketStream(Socket& socket, const Addr& dest, ConnType conn = CONN_ON_READ, int buffer_size = 8192) :
+        SocketStreamBuf(socket, dest, conn, buffer_size), std::istream(this)
     {
-        class ISocketStream
-            : public SocketStreamBuf,
-              public std::istream
-        {
-        public:
-            ISocketStream( Socket& socket,
-                           const Addr& dest,
-                           ConnType conn = CONN_ON_READ,
-                           int buffer_size = 8192 )
-                : SocketStreamBuf( socket, dest, conn, buffer_size ),
-                  std::istream( this )
-            {}
-    
-            ISocketStream( Socket& socket,
-                           ConnType conn = NO_CONN,
-                           int buffer_size = 8192 )
-                : SocketStreamBuf( socket, conn, buffer_size ),
-                  std::istream( this )
-            {}
-    
-        private:
-            // not for use
-            ISocketStream(const ISocketStream&);
-            ISocketStream& operator=(const ISocketStream&);
-        };
     }
+
+    ISocketStream(Socket& socket, ConnType conn = NO_CONN, int buffer_size = 8192) :
+        SocketStreamBuf(socket, conn, buffer_size), std::istream(this)
+    {
+    }
+
+  private:
+    // not for use
+    ISocketStream(const ISocketStream&);
+    ISocketStream& operator=(const ISocketStream&);
+};
+}
 }
 
 #endif

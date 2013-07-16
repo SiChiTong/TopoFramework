@@ -20,10 +20,13 @@
 static bool gLoop = true;
 
 // SIGINT handler prototype
-void topoHandler(int sig)
+void signal_callback_handler(int signum)
 {
-  if (sig == SIGINT)
+  if (signum == SIGINT)
+  {
+    std::cout << "signal=" << signum << std::endl;
     gLoop = false;
+  }
 }
 
 void sexprTest()
@@ -53,30 +56,10 @@ void sexprTest()
   }
 }
 
-void testConfig()
-{
-  ime::Config config("test.cfg", "");
-  config.resurrect();
-
-  int testInit = config.getValue("testInit", 10);
-  double testDouble = config.getValue("testDouble", 12.0);
-  bool testBool = config.getValue("testBool", true);
-  std::string testString = config.getValue("testString", std::string("Topo"));
-
-  std::cout << testInit << " " << testDouble << " " << testBool << " " << testString << std::endl;
-
-  config.persist();
-}
-
 void topoSignal()
 {
-  struct sigaction topoSigIntHandler;
-
-  topoSigIntHandler.sa_handler = topoHandler;
-  sigemptyset(&topoSigIntHandler.sa_mask);
-  topoSigIntHandler.sa_flags = 0;
-
-  sigaction(SIGINT, &topoSigIntHandler, NULL);
+  // Register signal and signal handler
+  signal(SIGINT, signal_callback_handler);
 }
 
 void topoLoop()

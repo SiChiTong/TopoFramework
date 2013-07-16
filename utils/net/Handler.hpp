@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-                          handler.hpp  - handles network startup
-                             -------------------
-    begin                : 14-AUG-2003
-    copyright            : (C) 2003 by The RoboCup Soccer Server 
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ handler.hpp  - handles network startup
+ -------------------
+ begin                : 14-AUG-2003
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -27,34 +27,34 @@
 
 namespace rcss
 {
-    namespace net
+namespace net
+{
+class Handler
+{
+  public:
+    static Handler&
+    instance();
+
+    bool valid() const
     {
-		class Handler
-		{
-		public:
-			static
-			Handler&
-			instance();
+      return m_valid;
+    }
+  private:
+    Handler();
 
-            bool valid() const
-            { return m_valid; }
-		private:
-			Handler();
+    Handler(const Handler&); // not used
 
+    Handler&
+    operator=(const Handler&); // not used
 
-			Handler( const Handler& ); // not used
-
-			Handler&
-			operator=( const Handler& ); // not used
-
-			~Handler();
+    ~Handler();
 
 #if defined(_WIN32) || defined(__WIN32__) || defined(WIN32) || defined(CYGWIN)
-			WSADATA m_WSAData;
+    WSADATA m_WSAData;
 #endif
-            bool m_valid;
-		};
-	}
+    bool m_valid;
+};
+}
 }
 
 #endif // RCSS_NET_HANDLER_HPP

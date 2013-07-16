@@ -36,8 +36,11 @@ Communication::~Communication()
 // private:
 void Communication::done()
 {
-  gSocket.close();
-  cout << "closed connection" << "\n";
+  if (connected)
+  {
+    gSocket.close();
+    cout << "closed connection" << "\n";
+  }
 }
 
 bool Communication::selectInput()
@@ -73,28 +76,32 @@ bool Communication::selectInput()
 
 void Communication::initInstance(const std::string& gHost, const int& gPort)
 {
-  cout << "connecting to TCP " << gHost << ":" << gPort << "\n";
-  //cout << "connecting to UDP " << gHost << ":" << gPort << "\n";
-  try
+  if (!connected)
   {
-    Addr local(INADDR_ANY, INADDR_ANY);
-    gSocket.bind(local);
-  } catch (BindErr& error)
-  {
-    cerr << "failed to bind socket with '" << error.what() << "'" << endl;
-    gSocket.close();
-    exit(EXIT_FAILURE);
-  }
+    cout << "connecting to TCP " << gHost << ":" << gPort << "\n";
+    //cout << "connecting to UDP " << gHost << ":" << gPort << "\n";
+    try
+    {
+      Addr local(INADDR_ANY, INADDR_ANY);
+      gSocket.bind(local);
+    } catch (BindErr& error)
+    {
+      cerr << "failed to bind socket with '" << error.what() << "'" << endl;
+      gSocket.close();
+      exit(EXIT_FAILURE);
+    }
 
-  try
-  {
-    Addr server(gPort, gHost);
-    gSocket.connect(server);
-  } catch (ConnectErr& error)
-  {
-    cerr << "connection failed with: '" << error.what() << "'" << endl;
-    gSocket.close();
-    exit(EXIT_FAILURE);
+    try
+    {
+      Addr server(gPort, gHost);
+      gSocket.connect(server);
+    } catch (ConnectErr& error)
+    {
+      cerr << "connection failed with: '" << error.what() << "'" << endl;
+      gSocket.close();
+      exit(EXIT_FAILURE);
+    }
+    connected = true;
   }
 }
 

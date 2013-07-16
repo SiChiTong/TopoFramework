@@ -1,12 +1,12 @@
 // -*-c++-*-
 
 /***************************************************************************
-               exception.hpp  -  Network associated excpetions
-                             -------------------
-    begin                : 07-JAN-2003
-    copyright            : (C) 2003 by The RoboCup Soccer Server
-                           Maintenance Group.
-    email                : sserver-admin@lists.sourceforge.net
+ exception.hpp  -  Network associated excpetions
+ -------------------
+ begin                : 07-JAN-2003
+ copyright            : (C) 2003 by The RoboCup Soccer Server
+ Maintenance Group.
+ email                : sserver-admin@lists.sourceforge.net
  ***************************************************************************/
 
 /***************************************************************************
@@ -25,113 +25,106 @@
 
 namespace rcss
 {
-    namespace net
-    {
-        class HostNotFound
-            : public std::exception
-        {
-        public:
-            HostNotFound( int err ) throw();
+namespace net
+{
+class HostNotFound: public std::exception
+{
+  public:
+    HostNotFound(int err) throw ();
 
-            const char*
-            what() const throw();
+    const char*
+    what() const throw ();
 
-            int
-            err() const throw();
-        private:
-            int m_err;
-        };
+    int
+    err() const throw ();
+  private:
+    int m_err;
+};
 
-        class OpenErr
-            : public std::exception
-        {
-        public:
-            OpenErr( int err ) throw();
+class OpenErr: public std::exception
+{
+  public:
+    OpenErr(int err) throw ();
 
-            const char*
-            what() const throw();
+    const char*
+    what() const throw ();
 
-            int
-            err() const throw();
-        private:
-            int m_err;
-        };
+    int
+    err() const throw ();
+  private:
+    int m_err;
+};
 
-        class BindErr
-            : public std::exception
-        {
-        public:
-            BindErr( int err ) throw();
+class BindErr: public std::exception
+{
+  public:
+    BindErr(int err) throw ();
 
-            const char*
-            what() const throw();
+    const char*
+    what() const throw ();
 
-            int
-            err() const throw();
-        private:
-            int m_err;
-        };
+    int
+    err() const throw ();
+  private:
+    int m_err;
+};
 
-        class ListenErr
-            : public std::exception
-        {
-        public:
-            ListenErr( int err ) throw();
+class ListenErr: public std::exception
+{
+  public:
+    ListenErr(int err) throw ();
 
-            const char*
-            what() const throw();
+    const char*
+    what() const throw ();
 
-            int
-            err() const throw();
-        private:
-            int m_err;
-        };
+    int
+    err() const throw ();
+  private:
+    int m_err;
+};
 
-        class AcceptErr
-            : public std::exception
-        {
-        public:
-            AcceptErr( int err ) throw();
+class AcceptErr: public std::exception
+{
+  public:
+    AcceptErr(int err) throw ();
 
-            const char*
-            what() const throw();
+    const char*
+    what() const throw ();
 
-            int
-            err() const throw();
-        private:
-            int m_err;
-        };
+    int
+    err() const throw ();
+  private:
+    int m_err;
+};
 
-        class GetNameErr
-            : public std::exception
-        {
-        public:
-            GetNameErr( int err ) throw();
+class GetNameErr: public std::exception
+{
+  public:
+    GetNameErr(int err) throw ();
 
-            const char*
-            what() const throw();
+    const char*
+    what() const throw ();
 
-            int
-            err() const throw();
-        private:
-            int m_err;
-        };
+    int
+    err() const throw ();
+  private:
+    int m_err;
+};
 
-        class ConnectErr
-            : public std::exception
-        {
-        public:
-            ConnectErr( int err ) throw();
+class ConnectErr: public std::exception
+{
+  public:
+    ConnectErr(int err) throw ();
 
-            const char*
-            what() const throw();
+    const char*
+    what() const throw ();
 
-            int
-            err() const throw();
-        private:
-            int m_err;
-        };
-    }
+    int
+    err() const throw ();
+  private:
+    int m_err;
+};
+}
 }
 
 #endif
