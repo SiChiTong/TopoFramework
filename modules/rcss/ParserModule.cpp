@@ -100,10 +100,10 @@ void ParserModule::execute()
   // Parser logic
   const char* msg = theServerMessage->msg.c_str();
   size_t len = strlen(msg);
-  sx = 0;
-  cc = 0;
   if (len > 0)
   {
+    sx = 0;
+    cc = 0;
     cc = init_continuation((char*) msg);
     sx = (sexp_t *) iparse_sexp((char*) msg, len, cc);
     while (sx != NULL)

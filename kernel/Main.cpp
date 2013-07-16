@@ -61,15 +61,13 @@ int main(int argc, char** argv)
   graph.topoSort();
   std::cout << graph << std::endl;
 
+  graph.graphOutputInitialize();
   while (gLoop)
   {
-    graph.callGraphOutput();
+    graph.graphOutputUpdate();
   }
-
-  //sexprTest();
-
   ime::Graph::deleteInstance();
+
   std::cout << "*** ends   " << std::endl;
   return EXIT_SUCCESS;
-
 }

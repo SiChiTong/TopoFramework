@@ -1,12 +1,12 @@
 /*
- * HelloWorldBehaviorModule.h
+ * TestModule.h
  *
  *  Created on: Jul 14, 2013
  *      Author: sam
  */
 
-#ifndef HELLOWORLDBEHAVIORMODULE_H_
-#define HELLOWORLDBEHAVIORMODULE_H_
+#ifndef TESTMODULE_H_
+#define TESTMODULE_H_
 
 #include "kernel/Framework.h"
 #include "representations/perception/JointData.h"
@@ -14,17 +14,17 @@
 #include "representations/rcss/SayMessage.h"
 #include "representations/rcss/BeamRequest.h"
 
-MODULE(HelloWorldBehaviorModule)
+MODULE(TestModule)
   REQUIRES(JointData)
   PROVIDES(JointRequestWithSpeeds)
   PROVIDES(SayMessage)
   PROVIDES(BeamRequest)
 END_MODULE
 
-class HelloWorldBehaviorModule: public HelloWorldBehaviorModuleBase
+class TestModule: public TestModuleBase
 {
   public:
-    HelloWorldBehaviorModule();
+    TestModule();
     void update(JointRequestWithSpeeds& theJointRequestWithSpeeds);
     void update(SayMessage& theSayMessage);
     void update(BeamRequest& theBeamRequest);
@@ -40,4 +40,4 @@ class HelloWorldBehaviorModule: public HelloWorldBehaviorModuleBase
 
 };
 
-#endif /* HELLOWORLDBEHAVIORMODULE_H_ */
+#endif /* TESTMODULE_H_ */

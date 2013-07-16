@@ -150,7 +150,8 @@ class Graph
     /** Computational resources */
     void computeGraph();
     void topoSort();
-    void callGraphOutput();
+    void graphOutputInitialize();
+    void graphOutputUpdate();
 
   protected:
     Graph();

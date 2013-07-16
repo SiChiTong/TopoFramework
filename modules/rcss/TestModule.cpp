@@ -1,19 +1,19 @@
 /*
- * HelloWorldBehaviorModule.cpp
+ * TestModule.cpp
  *
  *  Created on: Jul 14, 2013
  *      Author: sam
  */
 
-#include "HelloWorldBehaviorModule.h"
+#include "TestModule.h"
 #include <sstream>
 
-HelloWorldBehaviorModule::HelloWorldBehaviorModule() :
+TestModule::TestModule() :
     mState(S_Wait), mCounter(0)
 {
 }
 
-void HelloWorldBehaviorModule::update(JointRequestWithSpeeds& theJointRequestWithSpeeds)
+void TestModule::update(JointRequestWithSpeeds& theJointRequestWithSpeeds)
 {
   // fixMe
   //Action
@@ -74,15 +74,15 @@ void HelloWorldBehaviorModule::update(JointRequestWithSpeeds& theJointRequestWit
   //theOutputJointValues.msg = ss.str();
 }
 
-void HelloWorldBehaviorModule::update(SayMessage& theSayMessage)
+void TestModule::update(SayMessage& theSayMessage)
 {
   // fixMe
 }
 
-void HelloWorldBehaviorModule::update(BeamRequest& theBeamRequest)
+void TestModule::update(BeamRequest& theBeamRequest)
 {
   // fixMe
 }
 
-MAKE_MODULE(HelloWorldBehaviorModule)
+MAKE_MODULE(TestModule)
 
