@@ -10,9 +10,13 @@
 
 #include "kernel/Framework.h"
 #include "representations/test/TestOneRepresentation.h"
+#include "representations/test/TestTwoRepresentation.h"
+#include "representations/test/TestThreeRepresentation.h"
 
 MODULE(TestOneModule)
-PROVIDES(TestOneRepresentation)
+  PROVIDES(TestOneRepresentation)
+  USES(TestTwoRepresentation)
+  USES(TestThreeRepresentation)
 END_MODULE
 class TestOneModule : public TestOneModuleBase
 {

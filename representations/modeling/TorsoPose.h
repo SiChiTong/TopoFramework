@@ -1,0 +1,42 @@
+/**
+ * @file TorsoPose.h
+ * Contains the TorsoPose representation.
+ */
+#ifndef TORSOPOSE_H
+#define TORSOPOSE_H
+
+#include "kernel/Framework.h"
+#include "math/Pose3D.h"
+
+REPRESENTATION(TorsoPose)
+
+/** Estimated transformation from the ground to the torso center. */
+class TorsoPose: public TorsoPoseBase, public Pose3D
+{
+  public:
+
+    TorsoPose() :
+        valid(false)
+    {
+    }
+
+    bool valid;
+
+    Pose3D offset; /**< The estimated offset (including odometry) from last torso matrix to this one. (relative to the torso) */
+
+    /** Draws the torso pose. */
+    void draw() const
+    {
+      Vector3<double> v1(this->translation);
+      Vector3<double> v2(*this * Vector3<double>(1, 0, 0));
+      //debug.drawing.line("TorsoPose",
+      //   v1.x,v1.y,v1.z,v2.x,v2.y,v2.z, 255,0,0, 5, Drawing::ROBOTPOSE);
+      Vector3<double> v3(*this * Vector3<double>(0, 0, 1));
+      //debug.drawing.line("TorsoPose",
+      //   v1.x,v1.y,v1.z,v3.x,v3.y,v3.z, 255,0,0, 5, Drawing::ROBOTPOSE);
+    }
+
+};
+
+#endif
+

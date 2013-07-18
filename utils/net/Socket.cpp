@@ -74,8 +74,6 @@ Socket::Socket(SocketDesc s) :
 Socket::~Socket()
 {
   close();
-  if (m_handle)
-    delete m_handle;
 }
 
 bool Socket::open()
@@ -179,9 +177,9 @@ Addr Socket::getPeer() const
 
 void Socket::close()
 {
-  // fixMe: ???
-  //if (m_handle)
-  // m_handle->reset();
+  if (m_handle)
+    delete m_handle;
+  m_handle = NULL;
 }
 
 int Socket::setCloseOnExec(bool on)

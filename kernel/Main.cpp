@@ -15,9 +15,31 @@
 #include "utils/sexpr/sexp_ops.h"
 #include "kernel/Config.h"
 #include <string.h>
+#include <cassert>
 
 // bool to indicate whether to continue the agent mainloop
 static bool gLoop = true;
+
+#define SEXP_time "time"
+#define SEXP_now "now"
+#define SEXP_GS "GS"
+#define SEXP_t "t"
+#define SEXP_pm "pm"
+#define SEXP_GYR "GYR"
+#define SEXP_rt "rt"
+#define SEXP_ACC "ACC"
+#define SEXP_a "a"
+#define SEXP_HJ "HJ"
+#define SEXP_n "n"
+#define SEXP_ax "ax"
+#define SEXP_See "See"
+#define SEXP_pol "pol"
+#define SEXP_FRP "FRP"
+#define SEXP_rf "rf"
+#define SEXP_c "c"
+#define SEXP_f "f"
+#define SEXP_lf "lf"
+#define SEXP_COMPARE(sx, SEXP_VALUE) (strcmp(sx->list->val, SEXP_VALUE) == 0)
 
 // SIGINT handler prototype
 void signal_callback_handler(int signum)
@@ -27,6 +49,33 @@ void signal_callback_handler(int signum)
     std::cout << "signal=" << signum << std::endl;
     gLoop = false;
   }
+}
+
+void parseReal(const sexp_t* atom, float& value)
+{
+  sscanf(atom->val, "%f", &value);
+  printf("Data value: [%f]\n", value);
+}
+
+void parseReals(const sexp_t* atomList, float* values, const int length)
+{
+  const sexp_t* atom = atomList;
+  int i = 0;
+  do
+  {
+    printf("i=%i \n", i);
+    assert(i < length);
+    parseReal(atom, values[i]);
+    ++i;
+  } while ((atom = atom->next) != 0);
+
+}
+
+void parseString(const sexp_t* atom, std::string& value)
+{
+  std::string str(atom->val, strlen(atom->val));
+  value = str;
+  printf("Data value: [%s]\n", value.c_str());
 }
 
 void sexprTest()
@@ -45,6 +94,120 @@ void sexprTest()
     sx = (sexp_t *) iparse_sexp((char*) msg, len, cc);
     while (sx != NULL)
     {
+      printf("Data tag: [%s]\n", sx->list->val);
+      if (SEXP_COMPARE(sx, SEXP_time))
+      {
+        float data = 0;
+        /* s = (vallist) */
+        sexp_t* varlist = sx->list->next; // ()
+        if (varlist != 0)
+        {
+          sexp_t* atom = varlist->list->next;
+          parseReal(atom, data);
+        }
+      }
+
+      if (SEXP_COMPARE(sx, SEXP_HJ))
+      {
+        std::string joint_id;
+        float angle = 0;
+        sexp_t* varlist = sx->list->next; // (x)
+        while (varlist != 0)
+        {
+          if (SEXP_COMPARE(varlist, SEXP_n))
+          {
+            sexp_t* atom = varlist->list->next;
+            parseString(atom, joint_id);
+          }
+          if (SEXP_COMPARE(varlist, SEXP_ax))
+          {
+            sexp_t* atom = varlist->list->next;
+            parseReal(atom, angle);
+          }
+          varlist = varlist->next; // ()(x)
+        }
+      }
+
+      if (SEXP_COMPARE(sx, SEXP_GS))
+      {
+        std::string playmode;
+        float game_time = 0;
+        sexp_t* varlist = sx->list->next; // (x)
+        while (varlist != 0)
+        {
+          if (SEXP_COMPARE(varlist, SEXP_t))
+          {
+            sexp_t* atom = varlist->list->next;
+            parseReal(atom, game_time);
+          }
+          if (SEXP_COMPARE(varlist, SEXP_pm))
+          {
+            sexp_t* atom = varlist->list->next;
+            parseString(atom, playmode);
+          }
+          varlist = varlist->next; // ()(x)
+        }
+      }
+
+      if (SEXP_COMPARE(sx, SEXP_GYR))
+      {
+        float data[3] =
+        { 0 };
+        sexp_t* varlist = sx->list->next; // (x)
+        while (varlist != 0)
+        {
+          if (SEXP_COMPARE(varlist, SEXP_rt))
+          {
+            sexp_t* atomList = varlist->list->next;
+            parseReals(atomList, data, 3);
+          }
+          varlist = varlist->next; // ()(x)
+        }
+      }
+
+      if (SEXP_COMPARE(sx, SEXP_ACC))
+      {
+        float data[3] =
+        { 0 };
+        sexp_t* varlist = sx->list->next; // (x)
+        while (varlist != 0)
+        {
+          if (SEXP_COMPARE(varlist, SEXP_a))
+          {
+            sexp_t* atomList = varlist->list->next;
+            parseReals(atomList, data, 3);
+          }
+          varlist = varlist->next; // ()(x)
+        }
+      }
+
+      if (SEXP_COMPARE(sx, SEXP_FRP))
+      {
+        std::string name;
+        float data[3] =
+        { 0 };
+        sexp_t* varlist = sx->list->next; // (x)
+        while (varlist != 0)
+        {
+          if (SEXP_COMPARE(varlist, SEXP_n))
+          {
+            sexp_t* atom = varlist->list->next;
+            parseString(atom, name);
+          }
+          if (SEXP_COMPARE(varlist, SEXP_c))
+          {
+            sexp_t* atomList = varlist->list->next;
+            parseReals(atomList, data, 3);
+          }
+          if (SEXP_COMPARE(varlist, SEXP_f))
+          {
+            sexp_t* atomList = varlist->list->next;
+            parseReals(atomList, data, 3);
+          }
+          varlist = varlist->next; // ()(x)
+        }
+      }
+
       print_sexp(buf, 4096, sx);
       fprintf(stderr, "\n\n%s\n", buf);
       destroy_sexp(sx);
@@ -58,7 +221,7 @@ void sexprTest()
 
 void topoSignal()
 {
-  // Register signal and signal handler
+// Register signal and signal handler
   signal(SIGINT, signal_callback_handler);
 }
 
@@ -77,10 +240,12 @@ int main(int argc, char** argv)
 {
   std::cout << "*** starts " << std::endl;
 
+  sexprTest();
+
   ime::Graph& graph = ime::Graph::getInstance();
   graph.computeGraph();
   graph.topoSort();
-  //std::cout << graph << std::endl;
+  std::cout << graph << std::endl;
   topoSignal();
   topoLoop();
 

@@ -21,7 +21,7 @@
 #include "utils/sexpr/sexp.h"
 #include "utils/sexpr/sexp_ops.h"
 #include <string.h>
-
+#include <cassert>
 
 MODULE(ParserModule)
   REQUIRES(ServerMessage)
@@ -29,7 +29,7 @@ MODULE(ParserModule)
   PROVIDES(FrameInfo)
   PROVIDES(PlayerInfo)
   PROVIDES(Gamestate)
-  
+
   PROVIDES(SimSparkLinePercept)
   PROVIDES(BallPercept)
   PROVIDES(FlagPercept)
@@ -40,10 +40,9 @@ MODULE(ParserModule)
   PROVIDES(ForceData)
   PROVIDES(HearMessage)
   PROVIDES(Groundtruth)
-  
-  PROVIDES(JointData)  
-END_MODULE
 
+  PROVIDES(JointData)
+END_MODULE
 
 class ParserModule: public ParserModuleBase
 {
@@ -69,31 +68,57 @@ class ParserModule: public ParserModuleBase
     void update(HearMessage& theHearMessage);
 
     //methods called by the parser
+  private:
+    void parseReal(const sexp_t* atom, float& value)
+    {
+      sscanf(atom->val, "%f", &value);
+      //printf("Data value: [%f]\n", value);
+    }
+
+    void parseReals(const sexp_t* atomList, float* values, const int length)
+    {
+      const sexp_t* atom = atomList;
+      int i = 0;
+      do
+      {
+        //printf("i=%i \n", i);
+        assert(i < length);
+        parseReal(atom, values[i]);
+        ++i;
+      } while ((atom = atom->next) != 0);
+
+    }
+
+    void parseString(const sexp_t* atom, std::string& value)
+    {
+      std::string str(atom->val, strlen(atom->val));
+      value = str;
+      //printf("Data value: [%s]\n", value.c_str());
+    }
+
+
     void reset();
+    void parseExpr();
     void setMessageTime(const float t_now);
     void setPlayerInfo(const int unum, const std::string& team_index);
     void setJoint(const std::string& joint_id, const float angle);
     void setBallPercept(const float distance, const float azimuth, const float elevation);
 
-    void addLinePercept(const float a1, const float a2, const float a3, const float b1,
-        const float b2, const float b3);
+    void addLinePercept(const float a1, const float a2, const float a3, const float b1, const float b2, const float b3);
     void setStaticVisionObject(const std::string& obj_id, const float distance, const float azimuth,
         const float elevation);
     void setAcc(const std::string& acc_id, const float x, const float y, const float z);
     void setGyro(const std::string& acc_id, const float x, const float y, const float z);
     void setGamestate(const double game_time, const std::string& playmode);
-    void setGroundtruthMyself(const double x, const double y, const double r, const double upx,
-        const double upy, const double upz, const double z, const double fwx, const double fwy,
-        const double fwz);
+    void setGroundtruthMyself(const double x, const double y, const double r, const double upx, const double upy,
+        const double upz, const double z, const double fwx, const double fwy, const double fwz);
     void setGroundtruthBall(const double x, const double y, const double z);
-    void setGroundtruthPlayer(const std::string& team, const float id, const double x,
-        const double y, const double z);
+    void setGroundtruthPlayer(const std::string& team, const float id, const double x, const double y, const double z);
     void addHearMsg(const float time, const float dir, const bool self, const std::string &msg);
-    void setForce(const std::string name, const float x, const float y, const float z,
-        const float vx, const float vy, const float vz);
+    void setForce(const std::string name, const float x, const float y, const float z, const float vx, const float vy,
+        const float vz);
     void setRobotPartPlayer(const std::string& team, const float id);
-    void setRobotPartPercept(PartPercept::ROBOT_PART type, const float x, const float y,
-        const float r);
+    void setRobotPartPercept(PartPercept::ROBOT_PART type, const float x, const float y, const float r);
 
   private:
 

@@ -21,10 +21,13 @@ class InputModule: public InputModuleBase
   public:
     InputModule();
     ~InputModule();
+    void init();
     void update(ServerMessage& theServerMessage);
 
   private:
     bool connected;
+    std::string initTeamname;
+    int initUnum;
 };
 
 #endif /* INPUTMODULE_H_ */

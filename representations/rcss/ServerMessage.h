@@ -15,8 +15,12 @@ REPRESENTATION(ServerMessage)
 class ServerMessage : public ServerMessageBase
 {
   public:
-    ServerMessage() : msg("") {}
+    ServerMessage() : msg(""), initTeamname(""), initUnum(0), firstMsg(false) {}
     std::string msg;
+    //information used for the init message
+    std::string initTeamname;
+    int initUnum;
+    bool firstMsg;
 };
 
 

@@ -39,6 +39,7 @@ void Communication::done()
   if (connected)
   {
     gSocket.close();
+    connected = false;
     cout << "closed connection" << "\n";
   }
 }
@@ -129,7 +130,11 @@ bool Communication::getMessage(std::string& msg)
     selectInput();
     int readResult = gSocket.recv(buffer + bytesRead, sizeof(unsigned int) - bytesRead);
     if (readResult < 0)
-      continue;
+    {
+      //continue;
+      cerr << "Communication::getMessage::readResult=" << readResult << endl;
+      return false;
+    }
     bytesRead += readResult;
   }
 
@@ -170,7 +175,11 @@ bool Communication::getMessage(std::string& msg)
 
     int readResult = gSocket.recv(offset, readLen);
     if (readResult < 0)
-      continue;
+    {
+      //continue;
+      cerr << "Communication::getMessage::readResult=" << readResult << endl;
+      return false;
+    }
     msgRead += readResult;
     offset += readResult;
     //cerr << "msgRead = |" << msgRead << "|\n";

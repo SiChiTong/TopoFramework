@@ -84,5 +84,20 @@ void TestModule::update(BeamRequest& theBeamRequest)
   // fixMe
 }
 
+void TestModule::update(MotionRequest& theMotionRequest)
+{
+  // fixMe
+}
+
+void TestModule::update(SpecialActionsOutput& theSpecialActionsOutput)
+{
+  // fixMe
+}
+
+void TestModule::update(SpecialMotionsOutput& theSpecialMotionsOutput)
+{
+  // fixMe
+}
+
 MAKE_MODULE(TestModule)
 

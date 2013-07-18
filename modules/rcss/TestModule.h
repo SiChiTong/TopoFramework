@@ -9,16 +9,20 @@
 #define TESTMODULE_H_
 
 #include "kernel/Framework.h"
-#include "representations/perception/JointData.h"
 #include "representations/motion/JointRequestWithSpeeds.h"
 #include "representations/rcss/SayMessage.h"
 #include "representations/rcss/BeamRequest.h"
+#include "representations/motion/MotionRequest.h"
+#include "representations/motion/SpecialActionsOutput.h"
+#include "representations/motion/SpecialMotionsOutput.h"
 
 MODULE(TestModule)
-  REQUIRES(JointData)
   PROVIDES(JointRequestWithSpeeds)
   PROVIDES(SayMessage)
   PROVIDES(BeamRequest)
+  PROVIDES(MotionRequest)
+  PROVIDES(SpecialActionsOutput)
+  PROVIDES(SpecialMotionsOutput)
 END_MODULE
 
 class TestModule: public TestModuleBase
@@ -28,6 +32,9 @@ class TestModule: public TestModuleBase
     void update(JointRequestWithSpeeds& theJointRequestWithSpeeds);
     void update(SayMessage& theSayMessage);
     void update(BeamRequest& theBeamRequest);
+    void update(MotionRequest& theMotionRequest);
+    void update(SpecialActionsOutput& theSpecialActionsOutput);
+    void update(SpecialMotionsOutput& theSpecialMotionsOutput);
 
   protected:
     enum eState

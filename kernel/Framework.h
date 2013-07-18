@@ -29,6 +29,7 @@ class Node
 {
   public:
     typedef std::vector<Node*> Nodes;
+    Nodes auxes;
     Nodes prevs;
     Nodes nexts;
     unsigned int value;
@@ -140,7 +141,8 @@ class Graph
     typedef std::map<unsigned int, Node*> GraphStructure;
     ModuleVector moduleVector;
     RepresentationVector representationVector;
-    ModuleRepresentationVector moduleRepresentationVector;
+    ModuleRepresentationVector moduleRepresentationRequiredVector;
+    ModuleRepresentationVector moduleRepresentationUsedVector;
     InDegreesMap inDegreesMap;
     GraphStructure graphStructure;
     unsigned int nodeCounter;
@@ -156,6 +158,7 @@ class Graph
     void addModule(Node* theInstance);
     void providedRepresentation(const char* moduleName, Node* theInstance, void (*updateRepresentation)(Node* , Node* ));
     void requiredRepresentation(const char* moduleName, const char* representationName);
+    void usedRepresentation(const char* moduleName, const char* representationName);
     Node* getRepresentation(const char* representationName);
 
     /** Computational resources */
@@ -221,11 +224,11 @@ class RepresentationRequierer
 
 };
 
-template<const char* (*getRepresentationName)(), class T>
+template<const char* (*getModuleName)(), const char* (*getRepresentationName)(), class T>
 class RepresentationUser
 {
   public:
-    RepresentationUser() {}
+    RepresentationUser() { Graph::getInstance().usedRepresentation(getModuleName(), getRepresentationName()); }
 
   protected:
     T* getRepresentation() const
@@ -266,7 +269,8 @@ protected: static void _update##REPRESENTATION(ime::Node* moduleNode, ime::Node*
 protected: ime::RepresentationProvider<&_This::getNameStatic, &_This::_update##REPRESENTATION, REPRESENTATION> _the##REPRESENTATION##Provides;      \
 
 #define USES(REPRESENTATION)                                               \
-protected: ime::RepresentationUser<&_This::getRepresentation##REPRESENTATION, REPRESENTATION> the##REPRESENTATION;                                  \
+private: static const char* getRepresentation##REPRESENTATION() { return #REPRESENTATION ; }       \
+protected: ime::RepresentationUser<&_This::getNameStatic, &_This::getRepresentation##REPRESENTATION, REPRESENTATION> the##REPRESENTATION;                                  \
 
 #define END_MODULE };                                                      \
 
