@@ -9,7 +9,14 @@
 
 void ime::Log::update()
 {
-  this->str("");
-  this->clear();
+  // This is as simple as it gets ...
+  std::string str = this->str();
+  if (str.length() > 0)
+  {
+    std::cout << this->str() << std::endl;
+    // Clear
+    this->str("");
+    this->clear();
+  }
 }
 

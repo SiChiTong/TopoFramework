@@ -9,6 +9,7 @@
 #define LOG_H_
 
 #include <sstream>
+#include <iostream>
 
 namespace ime
 {

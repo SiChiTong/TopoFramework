@@ -86,7 +86,7 @@ class TopoModule : public ime::TopoNode
       module->config.resurrect();
       module->init();
     }
-    void update() { module->log.update(); module->execute(); }
+    void update() { module->execute(); module->log.update(); }
     void release() { module->config.persist(); }
     const Node* getNode() const { return module; }
 };
@@ -100,7 +100,7 @@ class TopoRepresentation: public ime::TopoNode
     virtual ~TopoRepresentation() {}
     void allocate() {/** For later use */}
     void release()  {/** For later use */}
-    void update() { representation->log.update(); representation->update(module, representation); }
+    void update() { representation->update(module, representation); representation->log.update(); }
     const Node* getNode() const { return representation; }
 };
 

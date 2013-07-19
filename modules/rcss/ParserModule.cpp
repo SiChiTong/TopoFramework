@@ -2,6 +2,7 @@
 #include "math/Matrix.h"
 #include <cstdio>
 
+// S-Expressions
 #define SEXP_time "time"
 #define SEXP_now "now"
 #define SEXP_GS "GS"
@@ -156,6 +157,7 @@ void ParserModule::parseExpr()
       parseReal(atom, data);
       setMessageTime(data);
     }
+    return;
   }
 
   if (SEXP_COMPARE(sx, SEXP_HJ))
@@ -178,6 +180,7 @@ void ParserModule::parseExpr()
       varlist = varlist->next; // ()(x)
     }
     setJoint(joint_id, angle);
+    return;
   }
 
   if (SEXP_COMPARE(sx, SEXP_GS))
@@ -200,6 +203,7 @@ void ParserModule::parseExpr()
       varlist = varlist->next; // ()(x)
     }
     setGamestate(game_time, playmode);
+    return;
   }
 
   if (SEXP_COMPARE(sx, SEXP_GYR))
@@ -217,6 +221,7 @@ void ParserModule::parseExpr()
       }
       varlist = varlist->next; // ()(x)
     }
+    return;
   }
 
   if (SEXP_COMPARE(sx, SEXP_ACC))
@@ -234,6 +239,7 @@ void ParserModule::parseExpr()
       }
       varlist = varlist->next; // ()(x)
     }
+    return;
   }
 
   if (SEXP_COMPARE(sx, SEXP_FRP))
@@ -268,6 +274,7 @@ void ParserModule::parseExpr()
     {
       setForce(name, cdata[0], cdata[1], cdata[2], fdata[0], fdata[1], fdata[2]);
     }
+    return;
   }
 
   if (SEXP_COMPARE(sx, SEXP_See))
@@ -305,8 +312,8 @@ void ParserModule::parseExpr()
 
       varlist = varlist->next; // ()(x)
     }
+    return;
   }
-
 }
 
 //-------------------------------------------------------------------------
