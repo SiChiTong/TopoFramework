@@ -9,6 +9,7 @@
 #define FRAMEWORK_H_
 
 #include "Config.h"
+#include "Log.h"
 #include <iostream>
 #include <vector>
 #include <map>
@@ -50,6 +51,7 @@ class Module : public ime::Node
   public: virtual void init() {}
   public: virtual void execute() {}
   public: ime::Config config;
+  public: ime::Log log;
 };
 
 class Representation: public ime::Node
@@ -58,6 +60,7 @@ class Representation: public ime::Node
   public: Representation() : ime::Node(), update(0) {}
   public: virtual ~Representation() {}
   public: virtual void draw() const {}
+  public: ime::Log log;
 };
 
 class TopoNode
@@ -83,7 +86,7 @@ class TopoModule : public ime::TopoNode
       module->config.resurrect();
       module->init();
     }
-    void update() { module->execute(); }
+    void update() { module->log.update(); module->execute(); }
     void release() { module->config.persist(); }
     const Node* getNode() const { return module; }
 };
@@ -97,7 +100,7 @@ class TopoRepresentation: public ime::TopoNode
     virtual ~TopoRepresentation() {}
     void allocate() {/** For later use */}
     void release()  {/** For later use */}
-    void update() { representation->update(module, representation); }
+    void update() { representation->log.update(); representation->update(module, representation); }
     const Node* getNode() const { return representation; }
 };
 

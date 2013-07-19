@@ -52,7 +52,7 @@ void InputModule::update(ServerMessage& theServerMessage)
   ime::Communication& com = ime::Communication::getInstance();
   com.getMessage(theServerMessage.msg);
 
-  //std::cout << theServerMessage.msg << std::endl;
+  std::cout << theServerMessage.msg << std::endl;
 }
 
 MAKE_MODULE(InputModule)

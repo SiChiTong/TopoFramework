@@ -33,6 +33,18 @@ static bool gLoop = true;
 #define SEXP_n "n"
 #define SEXP_ax "ax"
 #define SEXP_See "See"
+// flags
+#define SEXP_F1L "F1L"
+#define SEXP_F1R "F1R"
+#define SEXP_F2L "F2L"
+#define SEXP_F2R "F2R"
+// goalposts
+#define SEXP_G1L "G1L"
+#define SEXP_G1R "G1R"
+#define SEXP_G2L "G2L"
+#define SEXP_G2R "G2R"
+#define SEXP_B "B"
+#define SEXP_L "L"
 #define SEXP_pol "pol"
 #define SEXP_FRP "FRP"
 #define SEXP_rf "rf"
@@ -204,6 +216,41 @@ void sexprTest()
             sexp_t* atomList = varlist->list->next;
             parseReals(atomList, data, 3);
           }
+          varlist = varlist->next; // ()(x)
+        }
+      }
+
+      if (SEXP_COMPARE(sx, SEXP_See))
+      {
+        std::string name;
+        float data[3] =
+        { 0 };
+        sexp_t* varlist = sx->list->next; // (x)
+        while (varlist != 0)
+        {
+          if (SEXP_COMPARE(varlist, SEXP_B))
+          {
+            printf("Data value: [%s]\n", varlist->list->val);
+            sexp_t* atomList = varlist->list->next->list->next; // (x a)
+            parseReals(atomList, data, 3);
+          }
+          // flags
+          if (SEXP_COMPARE(varlist, SEXP_F1L) || SEXP_COMPARE(varlist, SEXP_F1R)
+              || SEXP_COMPARE(varlist, SEXP_F2L) || SEXP_COMPARE(varlist, SEXP_F2R))
+          {
+            printf("Data value: [%s]\n", varlist->list->val);
+            sexp_t* atomList = varlist->list->next->list->next; // (x a)
+            parseReals(atomList, data, 3);
+          }
+          // goalposts
+          if (SEXP_COMPARE(varlist, SEXP_G1L) || SEXP_COMPARE(varlist, SEXP_G1R)
+              || SEXP_COMPARE(varlist, SEXP_G2L) || SEXP_COMPARE(varlist, SEXP_G2R))
+          {
+            printf("Data value: [%s]\n", varlist->list->val);
+            sexp_t* atomList = varlist->list->next->list->next; // (x a)
+            parseReals(atomList, data, 3);
+          }
+
           varlist = varlist->next; // ()(x)
         }
       }

@@ -410,7 +410,7 @@ void Hoap2WalkingEngine::calcLegJoints(const Vector3<double>& position,
   jointAngles[joint - 1] = footRotationAngles[joint == JID_LEG_LEFT1 ? 0 : 1] ;
 
   // mapping
-  jointAngles[joint - 1] =  jointAngles[joint - 1];
+  // jointAngles[joint - 1] =  jointAngles[joint - 1]; // fixMe: Sam Abeyruwan
   jointAngles[joint]     =  -sign * jointAngles[joint];
   jointAngles[joint + 1] = -jointAngles[joint + 1];
   jointAngles[joint + 2] = -jointAngles[joint + 2];

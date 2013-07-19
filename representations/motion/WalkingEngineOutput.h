@@ -4,6 +4,7 @@
 #include "kernel/Framework.h"
 #include "common/JointValues.h"
 #include "math/Pose2D.h"
+#include "math/Vector3.h"
 #include "WalkRequest.h"
 
 REPRESENTATION(WalkingEngineOutput)
