@@ -16,6 +16,7 @@
 #include <queue>
 #include <string>
 #include <stdint.h>
+#include <cassert>
 
 namespace ime
 {
@@ -28,19 +29,43 @@ namespace ime
  */
 class Node
 {
-  public:
+  private:
     typedef std::vector<Node*> Nodes;
     Nodes auxes;
     Nodes prevs;
     Nodes nexts;
-    unsigned int value;
+    unsigned int index;
     bool initialized;
     bool computationNode;
 
-    Node() : value(0), initialized(false), computationNode(false) {}
+  public:
+    Node() : index(0), initialized(false), computationNode(false) {}
     virtual ~Node() {}
-    virtual unsigned int getValue() const { return value; }
-    virtual bool getInitialized()   const { return initialized; }
+    unsigned int getIndex() const { return index; }
+    bool getInitialized()   const { return initialized; }
+    void setIndex(const unsigned int index) { if (!initialized) this->index = index; else assert(false);}
+    void setInitialized(const bool initialized) { if (!this->initialized) this->initialized = initialized; else assert(false); }
+    bool getComputationNode() const { return computationNode; }
+    void setComputationNode(const bool computationNode) { if (!initialized) this->computationNode = computationNode; else assert(false); }
+    void addAuxes(Node* that) { if (!initialized) this->auxes.push_back(that); else assert(false); }
+    void addPrevs(Node* that) { if (!initialized) this->prevs.push_back(that); else assert(false); }
+    void addNexts(Node* that) { if (!initialized) this->nexts.push_back(that); else assert(false); }
+    typedef Nodes::iterator iterator;
+    typedef Nodes::const_iterator const_iterator;
+    iterator auxesBegin() { return auxes.begin(); }
+    iterator auxesEnd()   { return auxes.end();   }
+    iterator nextsBegin() { return nexts.begin(); }
+    iterator nextsEnd()   { return nexts.end();   }
+    iterator prevsBegin() { return prevs.begin(); }
+    iterator pervsEnd()   { return prevs.end();   }
+    const_iterator auxesBegin() const { return auxes.begin(); }
+    const_iterator auxesEnd()   const { return auxes.end();   }
+    const_iterator nextsBegin() const { return nexts.begin(); }
+    const_iterator nextsEnd()   const { return nexts.end();   }
+    const_iterator prevsBegin() const { return prevs.begin(); }
+    const_iterator pervsEnd()   const { return prevs.end();   }
+    bool nextsEmpty() const { return nexts.empty(); }
+    bool auxesEmpty() const { return auxes.empty(); }
     virtual const char* getName() const =0;
 };
 

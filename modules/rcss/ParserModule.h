@@ -21,7 +21,6 @@
 #include "utils/sexpr/sexp.h"
 #include "utils/sexpr/sexp_ops.h"
 #include <string.h>
-#include <cassert>
 
 MODULE(ParserModule)
   REQUIRES(ServerMessage)

@@ -64,11 +64,11 @@ void ime::Graph::addModule(ime::Node* theInstance)
     }
   }
 
-  theInstance->value = nodeCounter++;
-  theInstance->computationNode = true;
+  theInstance->setIndex(nodeCounter++);
+  theInstance->setComputationNode(true);
   ime::Graph::ModuleEntry* newModuleEntry = new ime::Graph::ModuleEntry(theInstance);
   moduleVector.push_back(newModuleEntry);
-  inDegreesMap.insert(std::make_pair(theInstance->value, 0));
+  inDegreesMap.insert(std::make_pair(theInstance->getIndex(), 0));
 }
 
 void ime::Graph::providedRepresentation(const char* moduleName, ime::Node* theInstance,
@@ -84,11 +84,11 @@ void ime::Graph::providedRepresentation(const char* moduleName, ime::Node* theIn
       exit(EXIT_FAILURE);
     }
   }
-  theInstance->value = nodeCounter++;
+  theInstance->setIndex(nodeCounter++);
   ime::Graph::RepresentationEntry* newRepresentationEntry = new ime::Graph::RepresentationEntry(std::string(moduleName),
       theInstance, updateRepresentation);
   representationVector.push_back(newRepresentationEntry);
-  inDegreesMap.insert(std::make_pair(theInstance->value, 0));
+  inDegreesMap.insert(std::make_pair(theInstance->getIndex(), 0));
 }
 
 void ime::Graph::requiredRepresentation(const char* moduleName, const char* representationName)
@@ -128,7 +128,7 @@ void ime::Graph::computeGraph()
   for (ime::Graph::ModuleVector::iterator iter = moduleVector.begin(); iter != moduleVector.end(); ++iter)
   {
     ime::Graph::ModuleEntry* moduleEntry = *iter;
-    graphStructure.insert(std::make_pair(moduleEntry->moduleNode->getValue(), moduleEntry->moduleNode));
+    graphStructure.insert(std::make_pair(moduleEntry->moduleNode->getIndex(), moduleEntry->moduleNode));
   }
 
   // 2) Provides representations
@@ -137,15 +137,15 @@ void ime::Graph::computeGraph()
   {
     ime::Graph::RepresentationEntry* representationEntry = *iter;
     graphStructure.insert(
-        std::make_pair(representationEntry->representationNode->getValue(), representationEntry->representationNode));
+        std::make_pair(representationEntry->representationNode->getIndex(), representationEntry->representationNode));
 
     for (ime::Graph::ModuleVector::iterator iter2 = moduleVector.begin(); iter2 != moduleVector.end(); ++iter2)
     {
       if (std::string((*iter2)->moduleNode->getName()).compare(representationEntry->providedModuleName) == 0)
       {
-        representationEntry->representationNode->prevs.push_back((*iter2)->moduleNode);
+        representationEntry->representationNode->addPrevs((*iter2)->moduleNode);
         ((ime::Representation*) representationEntry->representationNode)->update = representationEntry->update;
-        (*iter2)->moduleNode->nexts.push_back(representationEntry->representationNode);
+        (*iter2)->moduleNode->addNexts(representationEntry->representationNode);
       }
     }
   }
@@ -186,7 +186,7 @@ void ime::Graph::computeGraph()
           << " is missing!" << std::endl;
     }
     assert(moduleNode && representationNode);
-    representationNode->nexts.push_back(moduleNode);
+    representationNode->addNexts(moduleNode);
 
   }
 
@@ -217,7 +217,7 @@ void ime::Graph::computeGraph()
 
     assert(moduleNode && representationNode);
 
-    representationNode->auxes.push_back(moduleNode);
+    representationNode->addAuxes(moduleNode);
 
   }
 
@@ -229,9 +229,9 @@ void ime::Graph::topoSort()
   for (ime::Graph::GraphStructure::iterator i = graphStructure.begin(); i != graphStructure.end(); ++i)
   {
     Node* x = i->second;
-    for (ime::Node::Nodes::iterator j = x->nexts.begin(); j != x->nexts.end(); ++j)
+    for (ime::Node::iterator j = x->nextsBegin(); j != x->nextsEnd(); ++j)
     {
-      ++inDegreesMap[(*j)->value];
+      ++inDegreesMap[(*j)->getIndex()];
     }
   }
 
@@ -252,12 +252,12 @@ void ime::Graph::topoSort()
     topoQueue.pop();
 
     TopoNode* topoNode = 0;
-    if (x->computationNode)
+    if (x->getComputationNode())
       topoNode = new TopoModule((Module*) x);
     else
-      topoNode = new TopoRepresentation(((Module*) *(x->prevs.begin())), (Representation*) x);
+      topoNode = new TopoRepresentation(((Module*) *(x->prevsBegin())), (Representation*) x);
 
-    if (x->initialized)
+    if (x->getInitialized())
     {
       graphOutput.push_back(topoNode);
       std::cout << "ERROR! Cycle detected!" << std::endl;
@@ -272,13 +272,13 @@ void ime::Graph::topoSort()
       }
       exit(EXIT_FAILURE);
     }
-    x->initialized = true;
+    x->setInitialized(true);
     graphOutput.push_back(topoNode);
-    for (ime::Node::Nodes::iterator j = x->nexts.begin(); j != x->nexts.end(); ++j)
+    for (ime::Node::iterator j = x->nextsBegin(); j != x->nextsEnd(); ++j)
     {
       ime::Node* y = *j;
-      --inDegreesMap[y->getValue()];
-      if (inDegreesMap[y->getValue()] == 0)
+      --inDegreesMap[y->getIndex()];
+      if (inDegreesMap[y->getIndex()] == 0)
       {
         topoQueue.push(y);
       }
@@ -331,7 +331,7 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
       ++iter)
   {
     const ime::Graph::ModuleEntry* moduleEntry = *iter;
-    out << moduleEntry->moduleNode->getName() << " " << moduleEntry->moduleNode->getValue() << std::endl;
+    out << moduleEntry->moduleNode->getName() << " " << moduleEntry->moduleNode->getIndex() << std::endl;
   }
 
   out << std::endl;
@@ -340,7 +340,7 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
   {
     const ime::Graph::RepresentationEntry* representationEntry = *iter;
     out << representationEntry->representationNode->getName() << " "
-        << representationEntry->representationNode->getValue() << " " << representationEntry->providedModuleName
+        << representationEntry->representationNode->getIndex() << " " << representationEntry->providedModuleName
         << std::endl;
   }
 
@@ -350,11 +350,11 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
       ++iter)
   {
     out << "[" << iter->first << ":" << iter->second->getName() << "] ";
-    for (ime::Node::Nodes::const_iterator iter2 = iter->second->nexts.begin(); iter2 != iter->second->nexts.end();
+    for (ime::Node::const_iterator iter2 = iter->second->nextsBegin(); iter2 != iter->second->nextsEnd();
         ++iter2)
     {
       ime::Node* next = *iter2;
-      out << "[" << next->getValue() << ":" << next->getName() << "] ";
+      out << "[" << next->getIndex() << ":" << next->getName() << "] ";
     }
     out << std::endl;
   }
@@ -362,7 +362,7 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
   for (ime::Graph::GraphOutput::const_iterator iter = that.graphOutput.begin(); iter != that.graphOutput.end(); ++iter)
   {
     const ime::Node* x = (*iter)->getNode();
-    out << x->getValue() << ":" << x->getName() << std::endl;
+    out << x->getIndex() << ":" << x->getName() << std::endl;
   }
 
   // Graphviz output
@@ -377,7 +377,7 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
         ++iter)
     {
       const ime::Node* x = (*iter)->getNode();
-      if (x->computationNode)
+      if (x->getComputationNode())
         graph << " " << x->getName() << "; ";
     }
     graph << "\n";
@@ -386,7 +386,7 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
         ++iter)
     {
       const ime::Node* x = (*iter)->getNode();
-      if (!x->computationNode)
+      if (!x->getComputationNode())
         graph << " " << x->getName() << "; ";
     }
     graph << "\n";
@@ -394,9 +394,9 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
         ++iter)
     {
       const ime::Node* x = (*iter)->getNode();
-      if (!x->nexts.empty())
+      if (!x->nextsEmpty())
       {
-        for (ime::Node::Nodes::const_iterator j = x->nexts.begin(); j != x->nexts.end(); ++j)
+        for (ime::Node::const_iterator j = x->nextsBegin(); j != x->nextsEnd(); ++j)
         {
           ime::Node* y = *j;
           graph << "\t" << x->getName() << " -> " << y->getName() << "; \n";
@@ -412,9 +412,9 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
         ++iter)
     {
       const ime::Node* x = (*iter)->getNode();
-      if (!x->auxes.empty())
+      if (!x->auxesEmpty())
       {
-        for (ime::Node::Nodes::const_iterator j = x->auxes.begin(); j != x->auxes.end(); ++j)
+        for (ime::Node::const_iterator j = x->auxesBegin(); j != x->auxesEnd(); ++j)
         {
           ime::Node* y = *j;
           graph << "\t" << x->getName() << " -> " << y->getName() << "; \n";
