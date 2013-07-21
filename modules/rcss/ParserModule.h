@@ -74,6 +74,12 @@ class ParserModule: public ParserModuleBase
       //printf("Data value: [%f]\n", value);
     }
 
+    void parseInt(const sexp_t* atom, int& value)
+    {
+      sscanf(atom->val, "%i", &value);
+      //printf("Data value: [%f]\n", value);
+    }
+
     void parseReals(const sexp_t* atomList, float* values, const int length)
     {
       const sexp_t* atom = atomList;

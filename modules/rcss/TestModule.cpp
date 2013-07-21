@@ -8,8 +8,15 @@
 #include "TestModule.h"
 #include <sstream>
 
-TestModule::TestModule()
+TestModule::TestModule() :
+    lastTime(0)
 {
+}
+
+void TestModule::execute()
+{
+  std::cout << theFrameInfo->time << "  " << theFrameInfo->time_ms << " " << thePlayerInfo->unum
+      << " " << theGamestate->playmode << std::endl;
 }
 
 void TestModule::update(SayMessage& theSayMessage)
@@ -24,30 +31,46 @@ void TestModule::update(BeamRequest& theBeamRequest)
 
 void TestModule::update(MotionRequest& theMotionRequest)
 {
-  // fixMe
+  static float sign = -1.0f;
+  if (config.getValue("walkRequest", false))
+  {
+    theMotionRequest.motion = MotionRequest::WALK;
+    Pose2D walkRequest(0, 0, 0);
+    walkRequest.translation.x = 900.0f * sign;
+    walkRequest.translation.y = 0.0f;
+    walkRequest.rotation = 0.0;
+    if (theFrameInfo->time_ms - lastTime > 10000)
+    {
+      sign *= -1.0;
+      lastTime = theFrameInfo->time_ms;
+    }
+
+    theMotionRequest.walkRequest = walkRequest;
+  }
+  else
+    theMotionRequest.motion = MotionRequest::STAND;
 }
 
 void TestModule::update(SpecialActionsOutput& theSpecialActionsOutput)
 {
-  // fixMe
-  theSpecialActionsOutput.active = true; // Default behavior
+  if (config.getValue("walkRequest", false))
+    theSpecialActionsOutput.active = false;
+  else
+    theSpecialActionsOutput.active = true;
 }
 
 void TestModule::update(SpecialMotionsOutput& theSpecialMotionsOutput)
 {
-  // fixMe
   theSpecialMotionsOutput.active = false;
 }
 
 void TestModule::update(DeadMotionOutput& theDeadMotionOutput)
 {
-  // fixMe
   theDeadMotionOutput.active = false;
 }
 
 void TestModule::update(KickMotionOutput& theKickMotionOutput)
 {
-  // fixMe
   theKickMotionOutput.active = false;
 }
 

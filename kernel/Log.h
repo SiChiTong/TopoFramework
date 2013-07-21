@@ -16,8 +16,13 @@ namespace ime
 // This is a very simple Log class
 class Log : public std::stringstream
 {
+  private:
+    bool verbose;
   public:
+    Log();
+    virtual ~Log();
     void update();
+    void setVerbose(const bool verbose);
 };
 }  // namespace ime
 

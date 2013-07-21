@@ -7,16 +7,33 @@
 
 #include "Log.h"
 
+ime::Log::Log() :
+    std::stringstream(), verbose(false)
+{
+}
+
+ime::Log::~Log()
+{
+}
+
 void ime::Log::update()
 {
   // This is as simple as it gets ...
-  std::string str = this->str();
-  if (str.length() > 0)
+  if (verbose)
   {
-    std::cout << this->str() << std::endl;
-    // Clear
-    this->str("");
-    this->clear();
+    std::string str = this->str();
+    if (str.length() > 0)
+    {
+      std::cout << this->str() << std::endl;
+      // Clear
+      this->str("");
+      this->clear();
+    }
   }
+}
+
+void ime::Log::setVerbose(const bool verbose)
+{
+  this->verbose = verbose;
 }
 

@@ -146,6 +146,7 @@ bool Communication::getMessage(std::string& msg)
   //printf ("xxx-%s\n", buffer+5);
 
   // msg is prefixed with it's total length
+  // TODO: fixMe
   int msgLen = ntohl(*(unsigned int*) buffer);
 
   // cerr << "GM 6 / " << msgLen << " (bytesRead " << bytesRead << ")\n";

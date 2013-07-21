@@ -6,6 +6,8 @@
 #define SEXP_time "time"
 #define SEXP_now "now"
 #define SEXP_GS "GS"
+#define SEXP_unum "unum"
+#define SEXP_team "team"
 #define SEXP_t "t"
 #define SEXP_pm "pm"
 #define SEXP_GYR "GYR"
@@ -172,7 +174,7 @@ void ParserModule::parseExpr()
         sexp_t* atom = varlist->list->next;
         parseString(atom, joint_id);
       }
-      if (SEXP_COMPARE(varlist, SEXP_ax))
+      else if (SEXP_COMPARE(varlist, SEXP_ax))
       {
         sexp_t* atom = varlist->list->next;
         parseReal(atom, angle);
@@ -185,24 +187,39 @@ void ParserModule::parseExpr()
 
   if (SEXP_COMPARE(sx, SEXP_GS))
   {
-    std::string playmode;
-    float game_time = 0;
+    std::string playmode, teamIndex;
+    float gameTime = 0;
+    int agentUnum = 0;
     sexp_t* varlist = sx->list->next; // (x)
     while (varlist != 0)
     {
       if (SEXP_COMPARE(varlist, SEXP_t))
       {
         sexp_t* atom = varlist->list->next;
-        parseReal(atom, game_time);
+        parseReal(atom, gameTime);
       }
-      if (SEXP_COMPARE(varlist, SEXP_pm))
+      else if (SEXP_COMPARE(varlist, SEXP_pm))
       {
         sexp_t* atom = varlist->list->next;
         parseString(atom, playmode);
       }
+      else if (SEXP_COMPARE(varlist, SEXP_unum))
+      {
+        sexp_t* atom = varlist->list->next;
+        parseInt(atom, agentUnum);
+      }
+      else if (SEXP_COMPARE(varlist, SEXP_team))
+      {
+        sexp_t* atom = varlist->list->next;
+        parseString(atom, teamIndex);
+      }
       varlist = varlist->next; // ()(x)
     }
-    setGamestate(game_time, playmode);
+    setGamestate(gameTime, playmode);
+    if (agentUnum > 0 && teamIndex.length() > 0)
+    {
+      setPlayerInfo(agentUnum, teamIndex);
+    }
     return;
   }
 
@@ -257,12 +274,12 @@ void ParserModule::parseExpr()
         sexp_t* atom = varlist->list->next;
         parseString(atom, name);
       }
-      if (SEXP_COMPARE(varlist, SEXP_c))
+      else if (SEXP_COMPARE(varlist, SEXP_c))
       {
         sexp_t* atomList = varlist->list->next;
         parseReals(atomList, cdata, 3);
       }
-      if (SEXP_COMPARE(varlist, SEXP_f))
+      else if (SEXP_COMPARE(varlist, SEXP_f))
       {
         sexp_t* atomList = varlist->list->next;
         parseReals(atomList, fdata, 3);
@@ -291,8 +308,7 @@ void ParserModule::parseExpr()
         parseReals(atomList, data, 3);
         setBallPercept(data[0], data[1], data[2]);
       }
-      // flags
-      if (SEXP_COMPARE(varlist, SEXP_F1L) || SEXP_COMPARE(varlist, SEXP_F1R) || SEXP_COMPARE(varlist, SEXP_F2L)
+      else if (SEXP_COMPARE(varlist, SEXP_F1L) || SEXP_COMPARE(varlist, SEXP_F1R) || SEXP_COMPARE(varlist, SEXP_F2L)
           || SEXP_COMPARE(varlist, SEXP_F2R))
       {
         //printf("Data value: [%s]\n", varlist->list->val);
@@ -300,8 +316,7 @@ void ParserModule::parseExpr()
         parseReals(atomList, data, 3);
         setStaticVisionObject(std::string(varlist->list->val), data[0], data[1], data[2]);
       }
-      // goalposts
-      if (SEXP_COMPARE(varlist, SEXP_G1L) || SEXP_COMPARE(varlist, SEXP_G1R) || SEXP_COMPARE(varlist, SEXP_G2L)
+      else if (SEXP_COMPARE(varlist, SEXP_G1L) || SEXP_COMPARE(varlist, SEXP_G1R) || SEXP_COMPARE(varlist, SEXP_G2L)
           || SEXP_COMPARE(varlist, SEXP_G2R))
       {
         //printf("Data value: [%s]\n", varlist->list->val);

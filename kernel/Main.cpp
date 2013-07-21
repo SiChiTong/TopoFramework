@@ -287,7 +287,7 @@ int main(int argc, char** argv)
 {
   std::cout << "*** starts " << std::endl;
 
-  sexprTest();
+  //sexprTest();
 
   ime::Graph& graph = ime::Graph::getInstance();
   graph.computeGraph();

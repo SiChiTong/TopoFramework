@@ -399,6 +399,10 @@ std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
         for (ime::Node::const_iterator j = x->nextsBegin(); j != x->nextsEnd(); ++j)
         {
           ime::Node* y = *j;
+          if (y->getComputationNode())
+            graph << "edge [color=green]; \n";
+          else
+            graph << "edge [color=blue]; \n";
           graph << "\t" << x->getName() << " -> " << y->getName() << "; \n";
         }
       }

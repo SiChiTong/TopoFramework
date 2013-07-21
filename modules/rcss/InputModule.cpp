@@ -49,10 +49,11 @@ void InputModule::update(ServerMessage& theServerMessage)
     com.putMessage(ssMsgInit.str());
     connected = true;
   }
+
   ime::Communication& com = ime::Communication::getInstance();
   com.getMessage(theServerMessage.msg);
 
-  std::cout << theServerMessage.msg << std::endl;
+  //std::cout << "msg=> " << theServerMessage.msg << std::endl;
 }
 
 MAKE_MODULE(InputModule)
