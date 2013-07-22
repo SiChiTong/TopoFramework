@@ -14,7 +14,7 @@ class PartPercept
   public:
     enum ROBOT_PART
     {
-      HEAD, RIGHT_ARM, LEFT_ARM, RIGHT_FOOT, LEFT_FOOT
+      HEAD, RIGHT_ARM, LEFT_ARM, RIGHT_FOOT, LEFT_FOOT, NUM_ROBOT_PART
     };
 
     int unum;

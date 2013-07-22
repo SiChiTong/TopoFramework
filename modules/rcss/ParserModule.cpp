@@ -31,6 +31,14 @@
 #define SEXP_G2R "G2R"
 #define SEXP_B "B"
 #define SEXP_L "L"
+#define SEXP_P "P"
+// players
+#define SEXP_id "id"
+#define SEXP_head "head"
+#define SEXP_rlowerarm "rlowerarm"
+#define SEXP_llowerarm "llowerarm"
+#define SEXP_rfoot "rfoot"
+#define SEXP_lfoot "lfoot"
 #define SEXP_pol "pol"
 //
 #define SEXP_FRP "FRP"
@@ -38,6 +46,9 @@
 #define SEXP_c "c"
 #define SEXP_f "f"
 #define SEXP_lf "lf"
+#define SEXP_hear "hear"
+#define SEXP_self "self"
+
 #define SEXP_COMPARE(sx, SEXP_VALUE) (strcmp(sx->list->val, SEXP_VALUE) == 0)
 
 void ParserModule::init()
@@ -113,6 +124,12 @@ void ParserModule::init()
   pm_name_2_id2.insert(std::pair<std::string, Gamestate::PLAYMODES>("free_kick_left", Gamestate::FREEKICK_OPP));
   pm_name_2_id2.insert(std::pair<std::string, Gamestate::PLAYMODES>("free_kick_right", Gamestate::FREEKICK_OWN));
 
+  identifier_2_body_part.insert(std::pair<std::string, PartPercept::ROBOT_PART>("head", PartPercept::HEAD));
+  identifier_2_body_part.insert(std::pair<std::string, PartPercept::ROBOT_PART>("rlowerarm", PartPercept::RIGHT_ARM));
+  identifier_2_body_part.insert(std::pair<std::string, PartPercept::ROBOT_PART>("llowerarm", PartPercept::LEFT_ARM));
+  identifier_2_body_part.insert(std::pair<std::string, PartPercept::ROBOT_PART>("rfoot", PartPercept::RIGHT_FOOT));
+  identifier_2_body_part.insert(std::pair<std::string, PartPercept::ROBOT_PART>("lfoot", PartPercept::LEFT_FOOT));
+
 }
 
 void ParserModule::execute()
@@ -159,6 +176,30 @@ void ParserModule::parseExpr()
       parseReal(atom, data);
       setMessageTime(data);
     }
+    return;
+  }
+
+  if (SEXP_COMPARE(sx, SEXP_hear))
+  {
+    std::string data[3];
+    /* s = (vallist) */
+    sexp_t* varlist = sx; // (x)
+    if (varlist != 0)
+    {
+      sexp_t* atom = varlist->list->next;
+      parseStrings(atom, data, 3);
+    }
+    float time = 0, direction = 0;
+    bool self = false;
+    sscanf(data[0].c_str(), "%f", &time);
+    if (strcmp(data[1].c_str(), SEXP_self) != 0)
+    {
+      sscanf(data[1].c_str(), "%f", &direction);
+    } else
+    {
+      self = true;
+    }
+    addHearMsg(time, direction, self, data[2]);
     return;
   }
 
@@ -324,6 +365,43 @@ void ParserModule::parseExpr()
         parseReals(atomList, data, 3);
         setStaticVisionObject(std::string(varlist->list->val), data[0], data[1], data[2]);
       }
+      else if (SEXP_COMPARE(varlist, SEXP_P))
+      {
+        //printf("Data value: [%s]\n", varlist->list->val);
+        std::string teamname;
+        int playerID = 0;
+        sexp_t* innerVarList = varlist->list->next;
+        do
+        {
+          //printf("\t Data value: [%s]\n", innerVarList->list->val);
+          if (SEXP_COMPARE(innerVarList, SEXP_team))
+          {
+            sexp_t* atom = innerVarList->list->next;
+            parseString(atom, teamname);
+          }
+          else if (SEXP_COMPARE(innerVarList, SEXP_id))
+          {
+            sexp_t* atom = innerVarList->list->next;
+            parseInt(atom, playerID);
+          }
+          else if (SEXP_COMPARE(innerVarList, SEXP_head)
+              || SEXP_COMPARE(innerVarList, SEXP_rlowerarm)
+              || SEXP_COMPARE(innerVarList, SEXP_llowerarm)
+              || SEXP_COMPARE(innerVarList, SEXP_rfoot) || SEXP_COMPARE(innerVarList, SEXP_lfoot))
+          {
+            std::string body_part_identifier(innerVarList->list->val, strlen(innerVarList->list->val));
+            //printf("\t Part name: [%s]\n", partName.c_str());
+            sexp_t* atomList = innerVarList->list->next->list->next; // (x a)
+            parseReals(atomList, data, 3);
+            if (playerID > 0 && teamname.length() > 0)
+            {
+              setRobotPartPercept(teamname, playerID, body_part_identifier, data[0], data[1], data[2]);
+            }
+          }
+
+        } while ((innerVarList = innerVarList->next) != 0);
+      }
+
 
       varlist = varlist->next; // ()(x)
     }
@@ -347,7 +425,6 @@ void ParserModule::reset()
   groundtruthUpdated = false;
   robotPartsOwn.clear();
   robotPartsOpp.clear();
-  robotPartsCurrent.clear();
 }
 
 void ParserModule::setMessageTime(const float t)
@@ -458,24 +535,16 @@ void ParserModule::setForce(const std::string name, const float x, const float y
   }
 }
 
-void ParserModule::setRobotPartPlayer(const std::string& team, const float id)
-{
-  std::vector<PartPercept> &targetVec = (team == ownTeamname ? robotPartsOwn : robotPartsOpp);
-  std::vector<PartPercept>::iterator iter = robotPartsCurrent.begin();
-  while (iter != robotPartsCurrent.end())
-  {
-    iter->unum = id;
-    targetVec.push_back(*iter);
-    iter++;
-  }
-  robotPartsCurrent.clear();
-}
-void ParserModule::setRobotPartPercept(PartPercept::ROBOT_PART type, const float distance, const float azimuth,
+
+void ParserModule::setRobotPartPercept(const std::string& team, const int& payerId,
+    const std::string& body_part_identifier, const float distance, const float azimuth,
     const float elevation)
 {
+  std::vector<PartPercept> &robotPartsCurrent =
+      (team == ownTeamname ? robotPartsOwn : robotPartsOpp);
   PartPercept part;
-  part.unum = -1;
-  part.type = type;
+  part.unum = payerId;
+  part.type = translate_robot_part(body_part_identifier);
   part.polar = Polar(distance, azimuth, elevation);
   robotPartsCurrent.push_back(part);
 }
@@ -498,6 +567,14 @@ const Gamestate::PLAYMODES ParserModule::translate_playmode(const std::string& p
 {
   std::map<std::string, Gamestate::PLAYMODES>::const_iterator iter = map.find(pm);
   return (iter != map.end()) ? iter->second : Gamestate::NUM_PLAYMODES;
+}
+
+const PartPercept::ROBOT_PART ParserModule::translate_robot_part(
+    const std::string& body_part_identifier) const
+{
+  std::map<std::string, PartPercept::ROBOT_PART>::const_iterator iter = identifier_2_body_part.find(
+      body_part_identifier);
+  return (iter != identifier_2_body_part.end()) ? iter->second : PartPercept::NUM_ROBOT_PART;
 }
 
 //-------------------------------------------------------------------------

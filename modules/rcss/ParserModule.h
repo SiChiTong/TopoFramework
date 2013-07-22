@@ -101,6 +101,18 @@ class ParserModule: public ParserModuleBase
       //printf("Data value: [%s]\n", value.c_str());
     }
 
+    void parseStrings(const sexp_t* atomList, std::string* values, const int length)
+    {
+      const sexp_t* atom = atomList;
+      int i = 0;
+      do
+      {
+        //printf("i=%i \n", i);
+        assert(i < length);
+        parseString(atom, values[i]);
+        ++i;
+      } while ((atom = atom->next) != 0);
+    }
 
     void reset();
     void parseExpr();
@@ -122,8 +134,8 @@ class ParserModule: public ParserModuleBase
     void addHearMsg(const float time, const float dir, const bool self, const std::string &msg);
     void setForce(const std::string name, const float x, const float y, const float z, const float vx, const float vy,
         const float vz);
-    void setRobotPartPlayer(const std::string& team, const float id);
-    void setRobotPartPercept(PartPercept::ROBOT_PART type, const float x, const float y, const float r);
+    void setRobotPartPercept(const std::string& team, const int& payerId, const std::string& body_part_identifier,
+        const float x, const float y, const float r);
 
   private:
 
@@ -171,22 +183,20 @@ class ParserModule: public ParserModuleBase
     //robot parts
     std::vector<PartPercept> robotPartsOwn;
     std::vector<PartPercept> robotPartsOpp;
-    std::vector<PartPercept> robotPartsCurrent;
+
+    /** Translation maps */
+    std::map<std::string, JOINT_ID> joint_name_2_id;
+    std::map<std::string, TEAM_ID> team_side_2_id;
+    std::map<std::string, Gamestate::PLAYMODES> pm_name_2_id, pm_name_2_id2;
+    std::map<std::string, PartPercept::ROBOT_PART> identifier_2_body_part;
 
     /** Translator methods */
     const JOINT_ID translate_joint_id(const std::string& joint_id) const;
     const TEAM_ID translate_team_side(const std::string& team_id) const;
     const Gamestate::PLAYMODES translate_playmode(const std::string& pm,
         std::map<std::string, Gamestate::PLAYMODES>& map) const;
-    /*    const TOUCH_ID translate_touch_id(const std::string& touch_id) const ;
-     */
+    const PartPercept::ROBOT_PART translate_robot_part(const std::string& body_part_identifier) const;
 
-    /** Translation maps */
-    std::map<std::string, JOINT_ID> joint_name_2_id;
-    std::map<std::string, TEAM_ID> team_side_2_id;
-    std::map<std::string, Gamestate::PLAYMODES> pm_name_2_id, pm_name_2_id2;
-    /*    std::map<std::string,TOUCH_ID> touch_name_2_id;
-     */
 };
 
 #endif

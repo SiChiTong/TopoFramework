@@ -13,6 +13,7 @@
 #include "representations/perception/FrameInfo.h"
 #include "representations/perception/PlayerInfo.h"
 #include "representations/perception/Gamestate.h"
+#include "representations/perception/HearMessage.h"
 
 #include "representations/rcss/SayMessage.h"
 #include "representations/rcss/BeamRequest.h"
@@ -29,6 +30,7 @@ MODULE(TestModule)
   REQUIRES(FrameInfo)
   REQUIRES(PlayerInfo)
   REQUIRES(Gamestate)
+  REQUIRES(HearMessage)
   // Only for testing purposes
   PROVIDES(SayMessage)
   PROVIDES(BeamRequest)
