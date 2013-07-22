@@ -84,8 +84,8 @@ class Module : public ime::Node
 
 class Representation: public ime::Node
 {
-  public: void (*update)(Node* , Node* );
-  public: Representation() : ime::Node(), update(0) {}
+  public: void (*updateThis)(Node* , Node* );
+  public: Representation() : ime::Node(), updateThis(0) {}
   public: virtual ~Representation() {}
   public: virtual void draw() const {}
   public: ime::Log log;
@@ -128,7 +128,7 @@ class TopoRepresentation: public ime::TopoNode
     virtual ~TopoRepresentation() {}
     void allocate() {/** For later use */}
     void release()  {/** For later use */}
-    void update() { representation->update(module, representation); representation->log.update(); }
+    void update() { representation->updateThis(module, representation); representation->log.update(); }
     const Node* getNode() const { return representation; }
 };
 

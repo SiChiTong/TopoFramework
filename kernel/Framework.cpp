@@ -157,7 +157,7 @@ void ime::Graph::computeGraph()
           representationEntry->providedModuleName) == 0)
       {
         representationEntry->representationNode->addPreviousNode((*iter2)->moduleNode);
-        ((ime::Representation*) representationEntry->representationNode)->update =
+        ((ime::Representation*) representationEntry->representationNode)->updateThis =
             representationEntry->update;
         (*iter2)->moduleNode->addNextNode(representationEntry->representationNode);
       }

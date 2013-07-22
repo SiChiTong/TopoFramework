@@ -14,6 +14,7 @@
 
 #include "representations/perception/FrameInfo.h"
 #include "representations/perception/SensorData.h"
+#include "representations/modeling/FKModel.h"
 #include "representations/modeling/FallState.h"
 #include "representations/modeling/UprightVec.h"
 #include "representations/motion/WalkingEngineOutput.h"
@@ -24,6 +25,7 @@
 MODULE(AccEvaluator)
   REQUIRES(FrameInfo)
   REQUIRES(SensorData)
+  REQUIRES(FKModel)
   USES(WalkingEngineOutput)
   PROVIDES(FallState)
   PROVIDES(UprightVec)
