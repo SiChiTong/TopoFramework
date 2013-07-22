@@ -30,10 +30,9 @@ namespace ime
 class Node
 {
   private:
-    typedef std::vector<Node*> Nodes;
-    Nodes auxes;
-    Nodes prevs;
-    Nodes nexts;
+    std::vector<Node*> auxiliaryNodes;
+    std::vector<Node*> previousNodes;
+    std::vector<Node*> nextNodes;
     unsigned int index;
     bool initialized;
     bool computationNode;
@@ -41,31 +40,35 @@ class Node
   public:
     Node() : index(0), initialized(false), computationNode(false) {}
     virtual ~Node() {}
+
     unsigned int getIndex() const { return index; }
     bool getInitialized()   const { return initialized; }
     void setIndex(const unsigned int index) { if (!initialized) this->index = index; else assert(false);}
     void setInitialized(const bool initialized) { if (!this->initialized) this->initialized = initialized; else assert(false); }
     bool getComputationNode() const { return computationNode; }
     void setComputationNode(const bool computationNode) { if (!initialized) this->computationNode = computationNode; else assert(false); }
-    void addAuxes(Node* that) { if (!initialized) this->auxes.push_back(that); else assert(false); }
-    void addPrevs(Node* that) { if (!initialized) this->prevs.push_back(that); else assert(false); }
-    void addNexts(Node* that) { if (!initialized) this->nexts.push_back(that); else assert(false); }
-    typedef Nodes::iterator iterator;
-    typedef Nodes::const_iterator const_iterator;
-    iterator auxesBegin() { return auxes.begin(); }
-    iterator auxesEnd()   { return auxes.end();   }
-    iterator nextsBegin() { return nexts.begin(); }
-    iterator nextsEnd()   { return nexts.end();   }
-    iterator prevsBegin() { return prevs.begin(); }
-    iterator pervsEnd()   { return prevs.end();   }
-    const_iterator auxesBegin() const { return auxes.begin(); }
-    const_iterator auxesEnd()   const { return auxes.end();   }
-    const_iterator nextsBegin() const { return nexts.begin(); }
-    const_iterator nextsEnd()   const { return nexts.end();   }
-    const_iterator prevsBegin() const { return prevs.begin(); }
-    const_iterator pervsEnd()   const { return prevs.end();   }
-    bool nextsEmpty() const { return nexts.empty(); }
-    bool auxesEmpty() const { return auxes.empty(); }
+    void addAuxiliaryNode(Node* that) { if (!initialized) this->auxiliaryNodes.push_back(that); else assert(false); }
+    void addPreviousNode(Node* that) { if (!initialized) this->previousNodes.push_back(that); else assert(false); }
+    void addNextNode(Node* that) { if (!initialized) this->nextNodes.push_back(that); else assert(false); }
+
+    typedef std::vector<Node*>::iterator iterator;
+    typedef std::vector<Node*>::const_iterator const_iterator;
+    iterator auxiliaryNodesBegin() { return auxiliaryNodes.begin(); }
+    iterator auxiliaryNodesEnd()   { return auxiliaryNodes.end();   }
+    iterator nextNodesBegin()      { return nextNodes.begin(); }
+    iterator nextNodesEnd()        { return nextNodes.end();   }
+    iterator previousNodesBegin()  { return previousNodes.begin(); }
+    iterator previousNodesEnd()    { return previousNodes.end();   }
+    const_iterator auxiliaryNodesBegin() const { return auxiliaryNodes.begin(); }
+    const_iterator auxiliaryNodesEnd()   const { return auxiliaryNodes.end();   }
+    const_iterator nextNodesBegin()      const { return nextNodes.begin(); }
+    const_iterator nextNodesEnd()        const { return nextNodes.end();   }
+    const_iterator previousNodesBegin()  const { return previousNodes.begin(); }
+    const_iterator previousNodesEnd()    const { return previousNodes.end();   }
+    bool previousNodesEmpty()  const { return previousNodes.empty(); }
+    bool nextNodesEmpty()      const { return nextNodes.empty(); }
+    bool auxiliaryNodesEmpty() const { return auxiliaryNodes.empty(); }
+
     virtual const char* getName() const =0;
 };
 
