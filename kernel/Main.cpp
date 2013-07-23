@@ -43,6 +43,7 @@ void topoLoop()
   while (gLoop)
   {
     graph.graphOutputUpdate();
+    graph.graphDrawing();
   }
   graph.graphOutputRelease();
 }

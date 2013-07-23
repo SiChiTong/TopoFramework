@@ -29,11 +29,9 @@ class TorsoPose: public TorsoPoseBase, public Pose3D
     {
       Vector3<double> v1(this->translation);
       Vector3<double> v2(*this * Vector3<double>(1, 0, 0));
-      //debug.drawing.line("TorsoPose",
-      //   v1.x,v1.y,v1.z,v2.x,v2.y,v2.z, 255,0,0, 5, Drawing::ROBOTPOSE);
+      drawing.line("TorsoPose", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, 255, 0, 0, 5);
       Vector3<double> v3(*this * Vector3<double>(0, 0, 1));
-      //debug.drawing.line("TorsoPose",
-      //   v1.x,v1.y,v1.z,v3.x,v3.y,v3.z, 255,0,0, 5, Drawing::ROBOTPOSE);
+      drawing.line("TorsoPose", v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, 255, 0, 0, 5);
     }
 
 };

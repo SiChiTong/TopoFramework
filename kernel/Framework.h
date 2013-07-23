@@ -10,6 +10,7 @@
 
 #include "Config.h"
 #include "Log.h"
+#include "Drawing.h"
 #include <iostream>
 #include <vector>
 #include <map>
@@ -74,21 +75,23 @@ class Node
 
 class Module : public ime::Node
 {
-  public: Module() : ime::Node() {}
+  public: Module() : ime::Node(), drawing(Drawing::getInstance()) {}
   public: virtual ~Module() {}
   public: virtual void init() {}
   public: virtual void execute() {}
   public: ime::Config config;
   public: ime::Log log;
+  public: ime::Drawing& drawing;
 };
 
 class Representation: public ime::Node
 {
   public: void (*updateThis)(Node* , Node* );
-  public: Representation() : ime::Node(), updateThis(0) {}
+  public: Representation() : ime::Node(), updateThis(0), drawing(Drawing::getInstance()) {}
   public: virtual ~Representation() {}
   public: virtual void draw() const {}
   public: ime::Log log;
+  public: ime::Drawing& drawing;
 };
 
 class TopoNode
@@ -128,7 +131,7 @@ class TopoRepresentation: public ime::TopoNode
     virtual ~TopoRepresentation() {}
     void allocate() {/** For later use */}
     void release()  {/** For later use */}
-    void update() { representation->updateThis(module, representation); representation->log.update(); }
+    void update() { representation->updateThis(module, representation); representation->log.update(); representation->draw(); }
     const Node* getNode() const { return representation; }
 };
 
@@ -198,6 +201,7 @@ class Graph
     void graphOutputAllocate();
     void graphOutputUpdate();
     void graphOutputRelease();
+    void graphDrawing();
 
   protected:
     Graph();

@@ -20,7 +20,7 @@ class Odometry: public OdometryBase
     /** Draws the 2d pose. */
     void draw() const
     {
-      //debug.drawing.pose("Odometry", pose, 0.18, 1, 0,0,0);
+      drawing.pose("Odometry", pose, 0.18, 1, 0,0,0);
     }
 
 };

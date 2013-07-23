@@ -15,16 +15,19 @@ TestModule::TestModule() :
 
 void TestModule::execute()
 {
-  std::cout << theFrameInfo->time << "  " << theFrameInfo->time_ms << " " << thePlayerInfo->unum
-      << " " << theGamestate->playmode << std::endl;
-  std::cout << "HearMessages=" << std::endl;
-  for (std::vector<HearMessageData>::const_iterator iter = theHearMessage->messages.begin();
-      iter != theHearMessage->messages.end(); ++iter)
-  {
-    const HearMessageData& hearMessageData = *iter;
-    std::cout << "\t" << hearMessageData.data << ":" << hearMessageData.self << ":"
-        << hearMessageData.time << std::endl;
-  }
+  /*
+   fixMe: Sam
+   std::cout << theFrameInfo->time << "  " << theFrameInfo->time_ms << " " << thePlayerInfo->unum
+   << " " << theGamestate->playmode << std::endl;
+   std::cout << "HearMessages=" << std::endl;
+   for (std::vector<HearMessageData>::const_iterator iter = theHearMessage->messages.begin();
+   iter != theHearMessage->messages.end(); ++iter)
+   {
+   const HearMessageData& hearMessageData = *iter;
+   std::cout << "\t" << hearMessageData.data << ":" << hearMessageData.self << ":"
+   << hearMessageData.time << std::endl;
+   }
+   */
 }
 
 void TestModule::update(SayMessage& theSayMessage)

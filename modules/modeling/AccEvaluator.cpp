@@ -113,7 +113,7 @@ void AccEvaluator::update(Odometry& theOdometry)
 void AccEvaluator::update(TorsoPose& theTorsoPose)
 {
   //create rough torso pose with the values available in this module
-  
+  // fixMe: TODO use the FKModel
   theTorsoPose.translation = Vector3<double>(0,0,
                          (orientation == ORIENTATION_STANDING ? 0.35 : 0.05));
 

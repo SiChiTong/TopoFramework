@@ -40,6 +40,8 @@ ime::Graph::~Graph()
   for (ime::Graph::GraphOutput::iterator iter = graphOutput.begin(); iter != graphOutput.end();
       ++iter)
     delete *iter;
+
+  ime::Drawing::deleteInstance();
 }
 
 ime::Graph& ime::Graph::getInstance()
@@ -346,6 +348,13 @@ void ime::Graph::graphOutputUpdate()
     // 2.1) Execute() / 2.2) Update()
     (*iter)->update();
   }
+}
+
+void ime::Graph::graphDrawing()
+{
+  // 4) Drawing
+  ime::Drawing& drawing = ime::Drawing::getInstance();
+  drawing.send();
 }
 
 std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)
