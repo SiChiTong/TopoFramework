@@ -13,12 +13,12 @@
 #include <cassert>
 
 ime::Config::Config() :
-    values(new HashMap), modified(false)
+    values(new HashMap), modified(false), persistenceMode(true)
 {
 }
 
 ime::Config::Config(const std::string name, const std::string path) :
-    values(new HashMap), name(name), path(path), modified(false)
+    values(new HashMap), name(name), path(path), modified(false), persistenceMode(true)
 {
 }
 
@@ -35,6 +35,11 @@ void ime::Config::setName(const std::string name)
 void ime::Config::setPath(const std::string path)
 {
   this->path = path;
+}
+
+void ime::Config::setPersist(const bool persistenceMode)
+{
+  this->persistenceMode = persistenceMode;
 }
 
 inline void configSplit(const std::string &s, char delim, std::vector<std::string> &tokens)
@@ -89,24 +94,31 @@ void ime::Config::persist()
   else
     ss << path << "/" << name << ".cfg";
   std::string output(ss.str());
-  if (modified)
+  if (persistenceMode)
   {
-    std::ofstream outputStream(output.c_str());
-    if (outputStream.is_open())
+    if (modified)
     {
-      for (HashMap::const_iterator iter = values->begin(); iter != values->end(); ++iter)
+      std::ofstream outputStream(output.c_str());
+      if (outputStream.is_open())
       {
-        outputStream << iter->first << "=" << iter->second << std::endl;
+        for (HashMap::const_iterator iter = values->begin(); iter != values->end(); ++iter)
+        {
+          outputStream << iter->first << "=" << iter->second << std::endl;
+        }
       }
+      else
+      {
+        std::cerr << "ERROR! config=" << output << " cannot be written!" << std::endl;
+      }
+      outputStream.close();
     }
     else
     {
-      std::cerr << "ERROR! config=" << output << " cannot be written!" << std::endl;
+      std::cout << "INFO! config=" << output << " not modified!" << std::endl;
     }
-    outputStream.close();
   }
   else
   {
-    std::cout << "INFO! config=" << output << " not modified!" << std::endl;
+    std::cout << "INFO! config=" << output << " persistence mode disabled!" << std::endl;
   }
 }

@@ -3,6 +3,11 @@
 
 MAKE_MODULE(JointPDControl)
 
+void JointPDControl::init()
+{
+  config.setPersist(false);
+}
+
 void JointPDControl::update(JointRequestWithSpeeds& theJointRequestWithSpeeds)
 {
   theJointRequestWithSpeeds.values = theJointRequest->values;
@@ -12,8 +17,8 @@ void JointPDControl::update(JointRequestWithSpeeds& theJointRequestWithSpeeds)
   /** @todo check angle limits of JointRequest */
 
   // pd control factors
-  double pFactor = config.getValue("p_factor", 0.26f);
-  double dFactor = config.getValue("d_factor", 0.01f);
+  double pFactor = config.getValue("p_factor", 0.28f);
+  double dFactor = config.getValue("d_factor", 0.010f);
   /*p *= pMultiplier;*//**< @todo p factor multiplier, used in kick */
 
   //get time step

@@ -14,11 +14,11 @@
 #include "representations/perception/PlayerInfo.h"
 #include "representations/perception/Gamestate.h"
 #include "representations/perception/HearMessage.h"
+#include "representations/motion/SpecialActionsOutput.h"
 
 #include "representations/rcss/SayMessage.h"
 #include "representations/rcss/BeamRequest.h"
 #include "representations/motion/MotionRequest.h"
-#include "representations/motion/SpecialActionsOutput.h"
 #include "representations/motion/SpecialMotionsOutput.h"
 #include "representations/motion/DeadMotionOutput.h"
 #include "representations/motion/KickMotionOutput.h"
@@ -35,7 +35,6 @@ MODULE(TestModule)
   PROVIDES(SayMessage)
   PROVIDES(BeamRequest)
   PROVIDES(MotionRequest)
-  PROVIDES(SpecialActionsOutput)
   PROVIDES(SpecialMotionsOutput)
   PROVIDES(DeadMotionOutput)
   PROVIDES(KickMotionOutput)
@@ -51,7 +50,6 @@ class TestModule: public TestModuleBase
     void update(SayMessage& theSayMessage);
     void update(BeamRequest& theBeamRequest);
     void update(MotionRequest& theMotionRequest);
-    void update(SpecialActionsOutput& theSpecialActionsOutput);
     void update(SpecialMotionsOutput& theSpecialMotionsOutput);
     void update(DeadMotionOutput& theDeadMotionOutput);
     void update(KickMotionOutput& theKickMotionOutput);

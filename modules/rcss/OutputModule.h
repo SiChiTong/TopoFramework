@@ -24,6 +24,7 @@ END_MODULE
 class OutputModule: public OutputModuleBase
 {
   public:
+    void init();
     void execute();
 
   private:

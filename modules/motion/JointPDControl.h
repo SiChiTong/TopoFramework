@@ -20,11 +20,11 @@ END_MODULE
 class JointPDControl : public JointPDControlBase
 {
   public:
-    
+
+    void init();
     void update(JointRequestWithSpeeds& theJointRequestWithSpeeds);
   
   private:
-  
     double lastTimestamp;
     float prevError[NUM_JOINT_ID];
     

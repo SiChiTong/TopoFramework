@@ -15,19 +15,6 @@ TestModule::TestModule() :
 
 void TestModule::execute()
 {
-  /*
-   fixMe: Sam
-   std::cout << theFrameInfo->time << "  " << theFrameInfo->time_ms << " " << thePlayerInfo->unum
-   << " " << theGamestate->playmode << std::endl;
-   std::cout << "HearMessages=" << std::endl;
-   for (std::vector<HearMessageData>::const_iterator iter = theHearMessage->messages.begin();
-   iter != theHearMessage->messages.end(); ++iter)
-   {
-   const HearMessageData& hearMessageData = *iter;
-   std::cout << "\t" << hearMessageData.data << ":" << hearMessageData.self << ":"
-   << hearMessageData.time << std::endl;
-   }
-   */
 }
 
 void TestModule::update(SayMessage& theSayMessage)
@@ -62,15 +49,10 @@ void TestModule::update(MotionRequest& theMotionRequest)
     theMotionRequest.walkRequest = walkRequest;
   }
   else
-    theMotionRequest.motion = MotionRequest::STAND;
-}
-
-void TestModule::update(SpecialActionsOutput& theSpecialActionsOutput)
-{
-  if (config.getValue("walkRequest", false))
-    theSpecialActionsOutput.active = false;
-  else
-    theSpecialActionsOutput.active = true;
+  {
+    theMotionRequest.motion = MotionRequest::SPECIAL_ACTION;
+    theMotionRequest.specialActionRequest = MotionRequest::STAND_UP_BACK;
+  }
 }
 
 void TestModule::update(SpecialMotionsOutput& theSpecialMotionsOutput)

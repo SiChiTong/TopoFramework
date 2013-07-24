@@ -7,6 +7,11 @@
 
 #include "OutputModule.h"
 
+void OutputModule::init()
+{
+  config.setPersist(false);
+}
+
 void OutputModule::execute()
 {
   // Generate stringstream

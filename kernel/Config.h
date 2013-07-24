@@ -27,6 +27,7 @@ class Config
     std::string name;
     std::string path;
     bool modified;
+    bool persistenceMode;
   public:
     Config();
     Config(const std::string name, const std::string path);
@@ -36,6 +37,7 @@ class Config
     void setPath(const std::string path);
     void persist();
     void resurrect();
+    void setPersist(const bool persistenceMode);
 
     template<class T>
     T getCfgValue(const std::string name, T value)

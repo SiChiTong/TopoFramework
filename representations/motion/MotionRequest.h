@@ -55,7 +55,7 @@ class MotionRequest: public MotionRequestBase
 
     /** Initialization */
     MotionRequest() :
-        motion(DEAD)
+        motion(DEAD), specialActionRequest(SPECIAL_STAND), kickSpeed(0.0f)
     {
     }
 
@@ -66,14 +66,13 @@ class MotionRequest: public MotionRequestBase
         Vector2<double> tmp = walkRequest.translation / 100.0;
         if (tmp.abs() > 1.0)
           tmp.normalize(1.0);
-        //debug.drawing.line("MotionRequest.walkRequest",
-        //      0, 0, 0,  tmp.x, tmp.y, 0,  128,255,128, 3, Drawing::ROBOTPOSE);
+        drawing.line("MotionRequest.walkRequest", 0, 0, 0, tmp.x, tmp.y, 0, 128, 255, 128, 3);
         tmp = Vector2<double>(0.5, 0);
         tmp.rotate(walkRequest.translation.angle());        // theRobotPose->pose.rotation);
         Vector2<double> tmp2 = tmp;
         tmp2.rotate(walkRequest.rotation);
-        //debug.drawing.line("MotionRequest.walkRequest",
-        //      tmp.x, tmp.y, 0,  tmp2.x, tmp2.y, 0,  128,255,128, 3, Drawing::ROBOTPOSE);
+        drawing.line("MotionRequest.walkRequest", tmp.x, tmp.y, 0, tmp2.x, tmp2.y, 0, 128, 255, 128,
+            3);
       }
     }
 };

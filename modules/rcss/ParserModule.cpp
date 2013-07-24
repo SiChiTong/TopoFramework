@@ -53,8 +53,8 @@
 
 void ParserModule::init()
 {
+  config.setPersist(false);
   parseGroundtruth = config.getValue("parseGroundtruth", false);
-  parseGroundtruth = false;
   frameNumber = 0;
   lastMessageTime = 0;
   messageTime = 0;
