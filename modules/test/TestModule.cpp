@@ -35,23 +35,35 @@ void TestModule::update(MotionRequest& theMotionRequest)
   static float sign = -1.0f;
   if (config.getValue("walkRequest", false))
   {
-    theMotionRequest.motion = MotionRequest::WALK;
-    Pose2D walkRequest(0, 0, 0);
-    walkRequest.translation.x = 900.0f * sign;
-    walkRequest.translation.y = 0.0f;
-    walkRequest.rotation = 0.0;
-    if (theFrameInfo->time_ms - lastTime > 10000)
+    if (theFallState->orientation == ORIENTATION_LYING_FORWARD)
     {
-      sign *= -1.0;
-      lastTime = theFrameInfo->time_ms;
+      theMotionRequest.motion = MotionRequest::SPECIAL_ACTION;
+      theMotionRequest.specialActionRequest = MotionRequest::STAND_UP_FRONT;
     }
-
-    theMotionRequest.walkRequest = walkRequest;
+    else if (theFallState->orientation == ORIENTATION_LYING_BACK)
+    {
+      theMotionRequest.motion = MotionRequest::SPECIAL_ACTION;
+      theMotionRequest.specialActionRequest = MotionRequest::STAND_UP_BACK;
+    }
+    else
+    {
+      theMotionRequest.motion = MotionRequest::WALK;
+      Pose2D walkRequest(0, 0, 0);
+      walkRequest.translation.x = 900.0f * sign;
+      walkRequest.translation.y = 0.0f;
+      walkRequest.rotation = 0.0;
+      if (theFrameInfo->time_ms - lastTime > 10000)
+      {
+        sign *= -1.0;
+        lastTime = theFrameInfo->time_ms;
+      }
+      theMotionRequest.walkRequest = walkRequest;
+    }
   }
   else
   {
     theMotionRequest.motion = MotionRequest::SPECIAL_ACTION;
-    theMotionRequest.specialActionRequest = MotionRequest::STAND_UP_BACK;
+    theMotionRequest.specialActionRequest = MotionRequest::SPECIAL_STAND;
   }
 }
 

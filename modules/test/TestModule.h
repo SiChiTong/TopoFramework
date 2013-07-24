@@ -14,7 +14,7 @@
 #include "representations/perception/PlayerInfo.h"
 #include "representations/perception/Gamestate.h"
 #include "representations/perception/HearMessage.h"
-#include "representations/motion/SpecialActionsOutput.h"
+#include "representations/modeling/FallState.h"
 
 #include "representations/rcss/SayMessage.h"
 #include "representations/rcss/BeamRequest.h"
@@ -31,6 +31,7 @@ MODULE(TestModule)
   REQUIRES(PlayerInfo)
   REQUIRES(Gamestate)
   REQUIRES(HearMessage)
+  REQUIRES(FallState)
   // Only for testing purposes
   PROVIDES(SayMessage)
   PROVIDES(BeamRequest)
