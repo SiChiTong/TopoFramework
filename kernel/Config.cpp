@@ -79,6 +79,7 @@ void ime::Config::resurrect()
       }
     }
     inputStream.close();
+    std::cout << "INFO! config=" << input << " resurrected!" << std::endl;
   }
   else
   {

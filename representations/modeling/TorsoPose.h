@@ -7,6 +7,7 @@
 
 #include "kernel/Framework.h"
 #include "math/Pose3D.h"
+#include <sstream>
 
 REPRESENTATION(TorsoPose)
 
@@ -31,7 +32,10 @@ class TorsoPose: public TorsoPoseBase, public Pose3D
       Vector3<double> v2(*this * Vector3<double>(1, 0, 0));
       drawing.line("TorsoPose", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, 255, 0, 0, 5);
       Vector3<double> v3(*this * Vector3<double>(0, 0, 1));
-      drawing.line("TorsoPose", v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, 255, 0, 0, 5);
+      drawing.line("TorsoPose", v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, 0, 0, 255, 5);
+      std::stringstream ss;
+      ss << translation.z;
+      drawing.annotation("TorsoPose", ss.str(), 0, 0, 0.8, 255, 255, 255);
     }
 
 };

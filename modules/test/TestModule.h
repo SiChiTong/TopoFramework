@@ -10,11 +10,13 @@
 
 #include "kernel/Framework.h"
 
+#include "representations/perception/JointData.h"
 #include "representations/perception/FrameInfo.h"
 #include "representations/perception/PlayerInfo.h"
 #include "representations/perception/Gamestate.h"
 #include "representations/perception/HearMessage.h"
 #include "representations/modeling/FallState.h"
+#include "representations/modeling/TorsoPose.h"
 
 #include "representations/rcss/SayMessage.h"
 #include "representations/rcss/BeamRequest.h"
@@ -27,11 +29,13 @@
 #include "math/Pose2D.h"
 
 MODULE(TestModule)
+  REQUIRES(JointData)
   REQUIRES(FrameInfo)
   REQUIRES(PlayerInfo)
   REQUIRES(Gamestate)
   REQUIRES(HearMessage)
   REQUIRES(FallState)
+  REQUIRES(TorsoPose)
   // Only for testing purposes
   PROVIDES(SayMessage)
   PROVIDES(BeamRequest)

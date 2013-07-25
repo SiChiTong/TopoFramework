@@ -254,7 +254,7 @@ class Drawing
     DrawingCommandVector commandVector;
     enum
     {
-      sendBufferSize = 5120 // 5120 is max packet size for roboviz
+      sendBufferSize = 512 // 512 is max packet size for roboviz (from download)
     };
     unsigned char sendBuffer[sendBufferSize];
 

@@ -11,9 +11,11 @@
 #include "kernel/Framework.h"
 #include "kernel/Communication.h"
 #include "representations/rcss/ServerMessage.h"
+#include "representations/rcss/FieldDimensions.h"
 
 MODULE(InputModule)
   PROVIDES(ServerMessage)
+  PROVIDES(FieldDimensions)
 END_MODULE
 
 class InputModule: public InputModuleBase
@@ -23,6 +25,7 @@ class InputModule: public InputModuleBase
     ~InputModule();
     void init();
     void update(ServerMessage& theServerMessage);
+    void update(FieldDimensions& theFieldDimensions);
 
   private:
     bool connected;

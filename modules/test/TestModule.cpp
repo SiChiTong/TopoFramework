@@ -27,7 +27,17 @@ void TestModule::update(SayMessage& theSayMessage)
 
 void TestModule::update(BeamRequest& theBeamRequest)
 {
-  // fixMe
+  static uint32_t startTime = 0;
+  if (startTime < 100)
+  {
+    ++startTime;
+    theBeamRequest.active = true;
+    theBeamRequest.pose.translation.x = -5.0f;
+  }
+  else
+  {
+    theBeamRequest.active = false;
+  }
 }
 
 void TestModule::update(MotionRequest& theMotionRequest)
@@ -50,8 +60,8 @@ void TestModule::update(MotionRequest& theMotionRequest)
       theMotionRequest.motion = MotionRequest::WALK;
       Pose2D walkRequest(0, 0, 0);
       walkRequest.translation.x = 900.0f * sign;
-      walkRequest.translation.y = 0.0f;
-      walkRequest.rotation = 0.0;
+      walkRequest.translation.y = 0.0f * sign;
+      walkRequest.rotation = 0.f;
       if (theFrameInfo->time_ms - lastTime > 10000)
       {
         sign *= -1.0;
@@ -64,6 +74,30 @@ void TestModule::update(MotionRequest& theMotionRequest)
   {
     theMotionRequest.motion = MotionRequest::SPECIAL_ACTION;
     theMotionRequest.specialActionRequest = MotionRequest::SPECIAL_STAND;
+  }
+
+  if (config.getValue("drawHeadCoordinateSystem", true))
+  {
+    Pose3D cameraMatrix = Pose3D();
+
+    // first the common part
+    cameraMatrix.translate(0, 0.005, 0.09 + 0.065);
+    cameraMatrix.rotateZ(theJointData->values[JID_HEAD_PAN].angle);
+    cameraMatrix.rotateY(-theJointData->values[JID_HEAD_TILT].angle);
+
+    Pose3D coordianteFrame = *theTorsoPose;
+    coordianteFrame.conc(cameraMatrix);
+
+    // Drawing the coordinate frame
+    Pose3D robotPose(-5.0, 0, 0);
+
+    Vector3<double> v1 = robotPose * coordianteFrame.translation;
+    Vector3<double> v2 = robotPose * (coordianteFrame * Vector3<double>(1, 0, 0));
+    drawing.line("CoordianteFramex", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, 255, 0, 0, 2);
+    Vector3<double> v3 = robotPose * (coordianteFrame * Vector3<double>(0, 1, 0));
+    drawing.line("CoordianteFramey", v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, 0, 255, 0, 2);
+    Vector3<double> v4 = robotPose * (coordianteFrame * Vector3<double>(0, 0, 1));
+    drawing.line("CoordianteFramez", v1.x, v1.y, v1.z, v4.x, v4.y, v4.z, 0, 0, 255, 2);
   }
 }
 
@@ -84,7 +118,8 @@ void TestModule::update(KickMotionOutput& theKickMotionOutput)
 
 void TestModule::update(HeadMotionRequest& theHeadMotionRequest)
 {
-  // fixMe
+  theHeadMotionRequest.pan = config.getValue("HeadMotionRequest.pan", 0.0f) * M_PI / 180.0;
+  theHeadMotionRequest.tilt = config.getValue("HeadMotionRequest.tilt", 0.0f) * M_PI / 180.0;
 }
 
 MAKE_MODULE(TestModule)
