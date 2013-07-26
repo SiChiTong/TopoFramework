@@ -10,8 +10,8 @@
 MAKE_MODULE(SelfLocator)
 
 SelfLocator::SelfLocator() :
-    alphaSlow(0), alphaFast(0), alpha1(0), alpha2(0), alpha3(0), alpha4(0), resamplingThreshold(0), standardDeviationBearingDistance(
-        0), standardDeviationAngle(0), standardDeviationSampleBearingDistance(0), samples(0), poseCalculator(
+    alphaSlow(0), alphaFast(0), alpha1(0), alpha2(0), alpha3(0), alpha4(0), resamplingThreshold(0), standardDeviationDistance(
+        0), standardDeviationAngle(0), standardDeviationSampleDistance(0), samples(0), poseCalculator(
         0), slowWeighting(0), fastWeighting(0), averageWeighting(0), totalWeighting(0), fieldBoundary(
         0), fieldDimensions(false)
 
@@ -39,31 +39,24 @@ void SelfLocator::init()
   alpha3 = config.getValue("alpha3", .0025);
   alpha4 = config.getValue("alpha4", .0025);
 
-  resamplingThreshold = config.getValue("resamplingThreshold", 15);
-  standardDeviationBearingDistance = config.getValue("standardDeviationBearingDistance", 0.4);
+  resamplingThreshold = config.getValue("resamplingThreshold", 4);
+  standardDeviationDistance = config.getValue("standardDeviationDistance", 0.4);
   standardDeviationAngle = config.getValue("standardDeviationAngle", 0.2);
-  standardDeviationSampleBearingDistance = config.getValue("standardDeviationSampleBearingDistance",
-      0.15);
+  standardDeviationSampleDistance = config.getValue("standardDeviationSampleDistance", 0.10);
 
-  samples = new SampleSet(config.getValue("nbParticles", 100));
+  samples = new SampleSet(config.getValue("sampleSetSize", 100));
   poseCalculator = new PoseCalculatorOverallAverage(*samples);
 
 }
 
 bool SelfLocator::preExecute()
 {
-  for (SampleSet::iterator i = samples->begin(); i != samples->end(); ++i)
-  {
-    Sample* sample = *i;
-    sample->weighting = 1.0;
-  }
-
-  if (!theFieldDimensions->initialized)
+  if (!theFieldDimensions->initialized || !thePlayerInfo->isValid)
   {
     return false;
   }
 
-  if (!fieldDimensions && theFieldDimensions->initialized)
+  if (!fieldDimensions && theFieldDimensions->initialized && thePlayerInfo->isValid)
   {
     fieldDimensions = true;
 
@@ -78,10 +71,6 @@ bool SelfLocator::preExecute()
     double fl = theFieldDimensions->halfLength; // field length x-axis
     double fw = theFieldDimensions->halfWidth; // field width  y-axis
     double gw = theFieldDimensions->halfGoalWidth; // this will be fixed soon
-
-    std::cout << fl << " " << fw << " " << gw << std::endl;
-    std::cout << theFieldDimensions->halfLengthPlusBorder << " "
-        << theFieldDimensions->halfWidthPlusBorder << std::endl;
 
     if (thePlayerInfo->team == TEAM_RIGHT)
     {
@@ -150,7 +139,6 @@ void SelfLocator::execute()
   if (!preExecute())
     return;
 
-  totalWeighting = 0.0;
   // Update all current particles with the motion model
   motionModel();
   // Update all current particles with sensor model
@@ -208,65 +196,82 @@ Vector3<double> SelfLocator::toVector(const Polar& polar) const
 
 void SelfLocator::sensorModel()
 {
-  // fixMe
-  Pose3D cameraMatrix = Pose3D();
+  /* Debug
+   Pose3D globalPose = Pose3D();
 
-  // first the common part
-  cameraMatrix.translate(0, 0.005, 0.09 + 0.065);
-  cameraMatrix.rotateZ(theJointData->values[JID_HEAD_PAN].angle);
-  cameraMatrix.rotateY(-theJointData->values[JID_HEAD_TILT].angle);
+   Pose3D myRobotPose = Pose3D();
+   myRobotPose.translate(robotPose.pose.translation.x, robotPose.pose.translation.y, 0.0f);
+   myRobotPose.rotateZ(robotPose.pose.rotation);
+   */
 
-  Pose3D coordianteFrame = *theTorsoPose;
-  coordianteFrame.conc(cameraMatrix);
+  Pose3D sensorPose = Pose3D();
+  sensorPose.translate(0, 0.005, 0.09 + 0.065);
+  sensorPose.rotateZ(theJointData->values[JID_HEAD_PAN].angle);
+  sensorPose.rotateY(-theJointData->values[JID_HEAD_TILT].angle);
 
+  Pose3D robotLocalPose = Pose3D();
+  robotLocalPose.conc(*theTorsoPose).conc(sensorPose);
+
+  /* Debug
+   globalPose.conc(myRobotPose).conc(robotLocalPose);
+   */
+  selectedModels.clear();
   selectedObservations.clear();
 
   for (std::map<FLAG_ID, Polar>::const_iterator iter = theFlagPercept->flags.begin();
       iter != theFlagPercept->flags.end(); ++iter)
   {
     Vector2<double> modelVector = flags.find(iter->first)->second;
-    Vector3<double> observation = toVector(iter->second);
-    Vector3<double> observationVector = coordianteFrame * observation;
-    selectedObservations.push_back(std::make_pair(modelVector, observationVector));
+    Vector3<double> observationVector = robotLocalPose * toVector(iter->second);
+    selectedModels.push_back(modelVector);
+    selectedObservations.push_back(Vector2<double>(observationVector.x, observationVector.y));
+
+    // Flags
+    /* Debug
+     Vector3<double> v0 = myRobotPose.translation;
+     Vector3<double> v1 = globalPose.translation;
+     Vector3<double> v2 = globalPose * toVector(iter->second);
+     drawing.line("SelfLocator.sensorModel.flags", v0.x, v0.y, v0.z, v2.x, v2.y, 0, 255, 255, 0, 2);
+     drawing.line("SelfLocator.sensorModel.flags", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, 0, 0, 255, 2);
+     std::stringstream ss;
+     ss << "F=" << modelVector.x << ":" << modelVector.y;
+     drawing.annotation("SelfLocator.sensorModel.flags", ss.str(), v2.x, v2.y, v2.z + 1, 0, 255,
+     255);
+     */
   }
 
   for (std::map<GOALPOST_ID, Polar>::const_iterator iter = theGoalPercept->goalposts.begin();
       iter != theGoalPercept->goalposts.end(); ++iter)
   {
     Vector2<double> modelVector = goals.find(iter->first)->second;
-    Vector3<double> observation = toVector(iter->second);
-    Vector3<double> observationVector = coordianteFrame * observation;
-    selectedObservations.push_back(std::make_pair(modelVector, observationVector));
+    Vector3<double> observationVector = sensorPose * toVector(iter->second);
+    selectedModels.push_back(modelVector);
+    selectedObservations.push_back(Vector2<double>(observationVector.x, observationVector.y));
+
+    // Goals
+    /* Debug
+     Vector3<double> v0 = myRobotPose.translation;
+     Vector3<double> v1 = globalPose.translation;
+     Vector3<double> v2 = globalPose * toVector(iter->second);
+     drawing.line("SelfLocator.sensorModel.flags", v0.x, v0.y, v0.z, v2.x, v2.y, 0, 255, 255, 0, 2);
+     drawing.line("SelfLocator.sensorModel.goals", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, 0, 0, 255, 2);
+     std::stringstream ss;
+     ss << "G=" << modelVector.x << ":" << modelVector.y;
+     drawing.annotation("SelfLocator.sensorModel.goals", ss.str(), v2.x, v2.y, v2.z + 1, 0, 255,
+     255);
+     */
   }
 
-  // TODO: sensor update
-  // draw the selected observations
-
-  Pose3D robotPose(-5.0, 0, 0);
-  for (SelectedObservations::const_iterator iter = selectedObservations.begin();
-      iter != selectedObservations.end(); ++iter)
+  totalWeighting = 0.0f;
+  for (unsigned int i = 0; i < selectedObservations.size(); i++)
   {
-    std::pair<Vector2<double>, Vector3<double> > obs = *iter;
-    Vector3<double> v1 = robotPose.translation;
-    Vector3<double> v2 = robotPose * obs.second;
-    drawing.line("SelfLocator.sensorModel", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, 255, 0, 0, 2);
-  }
-
-  for (SelectedObservations::const_iterator i = selectedObservations.begin();
-      i != selectedObservations.end(); ++i)
-  {
-    std::pair<Vector2<double>, Vector3<double> > obs = *i;
-    Vector2<double> modelPosition = obs.first;
-    Vector2<double> observePosition(obs.second.x, obs.second.y);
-
     for (SampleSet::iterator s = samples->begin(); s != samples->end(); ++s)
     {
       Sample* sample = *s;
-      sample->weighting *= computeWeightings(sample, modelPosition, observePosition,
-          standardDeviationBearingDistance, standardDeviationAngle);
+      sample->weighting = computeWeightings(sample, selectedModels[i], selectedObservations[i]);
+      totalWeighting += sample->weighting;
     }
   }
-
 }
 
 void SelfLocator::adaptWeightings()
@@ -309,8 +314,6 @@ void SelfLocator::resampling()
   const double weightingsSum(totalWeighting);
   const double resamplingPercentage(
       fabs(slowWeighting) > 0 ? std::max(0.0, 1.0 - fastWeighting / slowWeighting) : 0.0f);
-
-  std::cout << slowWeighting << " " << fastWeighting << " " << resamplingPercentage << std::endl;
   // const double resamplingPercentage(1.0); // @@ debug value
   const double numberOfResampledSamples = numberOfSamples * (1.0f - resamplingPercentage);
   const double threshold = resamplingThreshold * weightingsSum / numberOfSamples;
@@ -333,7 +336,7 @@ void SelfLocator::resampling()
       nextPos += weightingBetweenTwoDrawnSamples;
     }
   }
-  std::cout << "j=" << j << std::endl;
+
   for (; j < numberOfSamples; ++j)
     generateTemplate(oldSet->at(j), samples->at(j));
 }
@@ -341,13 +344,9 @@ void SelfLocator::resampling()
 void SelfLocator::generateTemplate(Sample* currentSample, Sample* nextSample)
 {
   if (selectedObservations.size() >= 2)
-  {
     generateTemplateFromPosts(currentSample, nextSample);
-  }
   else
-  {
     nextSample->set(currentSample);
-  }
   nextSample->cluster = poseCalculator->getNewClusterIndex();
 }
 
@@ -378,98 +377,89 @@ void SelfLocator::draw() const
   }
 }
 
-double SelfLocator::computeAngleWeighting(const Vector2<double> measuredPosition,
-    const Vector2<double>& modelPosition, const Pose2D& robotPose, double standardDeviation,
-    double bestPossibleWeighting)
+double SelfLocator::computeAngleWeighting(const Pose2D& robotPose,
+    const Vector2<double>& modelPosition, const Vector2<double>& observedPosition)
 {
-  bestPossibleWeighting = 1.0;
   const Vector2<double> relativeModelPosition = robotPose.invert() * modelPosition;
   const double angleDifferance = abs(
-      normalize(relativeModelPosition.angleToVector(measuredPosition)));
-  return gaussianProbability(angleDifferance, standardDeviation) / bestPossibleWeighting;
+      normalize(relativeModelPosition.angleToVector(observedPosition)));
+  return gaussianProbability(angleDifferance, standardDeviationAngle);
 }
 
-double SelfLocator::computeDistanceWeighting(const Vector2<double> measuredPosition,
-    const Vector2<double>& modelPosition, const Pose2D& robotPose, double standardDeviation,
-    double bestPossibleWeighting)
+double SelfLocator::computeDistanceWeighting(const Pose2D& robotPose,
+    const Vector2<double>& modelPosition, const Vector2<double>& observedPosition)
 {
-  bestPossibleWeighting = 1.0;
   const float modelDistance = (robotPose.translation - modelPosition).abs();
-  return gaussianProbability(abs(modelDistance - measuredPosition.abs()), standardDeviation)
-      / bestPossibleWeighting;
+  return gaussianProbability(abs(modelDistance - observedPosition.abs()), standardDeviationDistance);
 }
 
 double SelfLocator::computeWeightings(Sample* sample, const Vector2<double>& modelPosition,
-    const Vector2<double>& observedPosition, const double distanceStandardDeviation,
-    const double angleStandardDeviation)
+    const Vector2<double>& observedPosition)
 {
   const Pose2D robotPose(sample->rotation, sample->translation.x, sample->translation.y);
-
-  // Normalizing constants
-  double bestPossibleDistanceWeighting = gaussianProbability(0.0f, distanceStandardDeviation);
-  double bestPossibleAngleWeighting = gaussianProbability(0.0f, angleStandardDeviation);
-
-  double weigting = 1.0;
-  weigting *= computeDistanceWeighting(observedPosition, modelPosition, robotPose,
-      distanceStandardDeviation, bestPossibleDistanceWeighting);
-  weigting *= computeAngleWeighting(observedPosition, modelPosition, robotPose,
-      angleStandardDeviation, bestPossibleAngleWeighting);
-  return weigting;
+  return computeDistanceWeighting(robotPose, modelPosition, observedPosition)
+      * computeAngleWeighting(robotPose, modelPosition, observedPosition);
 }
 
 void SelfLocator::generateTemplateFromPosts(Sample* currentSample, Sample* nextSample)
 {
-  std::random_shuffle(selectedObservations.begin(), selectedObservations.end());
-  Vector2<double> absoluteLeftPostion = selectedObservations[0].first;
-  Vector2<double> observeLeftPosition(selectedObservations[0].second.x,
-      selectedObservations[0].second.y);
+  Vector2<double> absoluteLeftPostion(selectedModels[0]);
+  Vector2<double> observeLeftPosition(selectedObservations[0]);
 
-  Vector2<double> absoluteRightPostion = selectedObservations[1].first;
-  Vector2<double> observeRightPostion(selectedObservations[1].second.x,
-      selectedObservations[1].second.y);
+  Vector2<double> absoluteRightPostion(selectedModels[selectedModels.size() - 1]);
+  Vector2<double> observeRightPostion(selectedObservations[selectedObservations.size() - 1]);
 
   double leftPostDist = observeLeftPosition.abs();
-  double leftDistUncertainty = sampleTriangularDistribution(standardDeviationSampleBearingDistance);
-  if (leftPostDist + leftDistUncertainty > standardDeviationSampleBearingDistance)
+  double leftDistUncertainty = sampleTriangularDistribution(standardDeviationSampleDistance);
+  if (leftPostDist + leftDistUncertainty > standardDeviationSampleDistance)
     leftPostDist += leftDistUncertainty;
   double rightPostDist = observeRightPostion.abs();
-  double rightDistUncertainty = sampleTriangularDistribution(
-      standardDeviationSampleBearingDistance);
-  if (rightPostDist + rightDistUncertainty > standardDeviationSampleBearingDistance)
+  double rightDistUncertainty = sampleTriangularDistribution(standardDeviationSampleDistance);
+  if (rightPostDist + rightDistUncertainty > standardDeviationSampleDistance)
     rightPostDist += rightDistUncertainty;
-  Circle c1(absoluteLeftPostion, leftPostDist + theFieldDimensions->goalPostRadius);
-  Circle c2(absoluteRightPostion, rightPostDist + theFieldDimensions->goalPostRadius);
+
+  Circle c1(absoluteLeftPostion, leftPostDist);
+  Circle c2(absoluteRightPostion, rightPostDist);
 
   Vector2<double> p1, p2;
-  std::vector<SampleTemplate> sampleTemplates;
   if (getIntersectionOfCircles(c1, c2, p1, p2))
-    intersectionPointInsideField(sampleTemplates, p1, p2);
-
-  if (!sampleTemplates.empty())
   {
-    SampleTemplate sampleTemplate =
-        sampleTemplates.size() == 1 ?
-            sampleTemplates[0] : sampleTemplates[rand() % sampleTemplates.size()];
-    double expectedAngle = (absoluteLeftPostion - sampleTemplate.translation).angle()
-        - observeLeftPosition.angle();
-    expectedAngle += (absoluteRightPostion - sampleTemplate.translation).angle()
-        - observeRightPostion.angle();
-    expectedAngle = normalize(expectedAngle / 2.0);
-    nextSample->set(sampleTemplate.translation.x, sampleTemplate.translation.y, expectedAngle,
-        1.0f);
+    if (isInsideCarpet(p1))
+    {
+      float origAngle = (absoluteLeftPostion - p1).angle();
+      float observedAngle = observeLeftPosition.angle();
+      Pose2D templatePose(normalize(origAngle - observedAngle), p1);
+      nextSample->set(templatePose.translation.x, templatePose.translation.y, templatePose.rotation,
+          1.0f);
+    }
+    else if (isInsideCarpet(p2))
+    {
+      float origAngle = (absoluteLeftPostion - p2).angle();
+      float observedAngle = observeLeftPosition.angle();
+      Pose2D templatePose(normalize(origAngle - observedAngle), p2);
+      nextSample->set(templatePose.translation.x, templatePose.translation.y, templatePose.rotation,
+          1.0f);
+    }
+    else
+    {
+      nextSample->set(currentSample);
+    }
   }
   else
+  {
     nextSample->set(currentSample);
-
+  }
 }
 
 int SelfLocator::getIntersectionOfCircles(const Circle& c0, const Circle& c1, Vector2<double>& p1,
     Vector2<double>& p2)
 {
-  drawing.circle("SelfLocator.getIntersectionOfCircles", c0.center.x, c0.center.y, c0.radius, 2,
-      255, 0, 0);
-  drawing.circle("SelfLocator.getIntersectionOfCircles", c1.center.x, c1.center.y, c1.radius, 2, 0,
-      255, 0);
+  /* Debug
+   drawing.circle("SelfLocator.getIntersectionOfCircles", c0.center.x, c0.center.y, c0.radius, 2,
+   255, 0, 0);
+   drawing.circle("SelfLocator.getIntersectionOfCircles", c1.center.x, c1.center.y, c1.radius, 2, 0,
+   255, 0);
+   */
 
   double a, dx, dy, d, h, rx, ry;
   double x2, y2;
@@ -527,22 +517,7 @@ int SelfLocator::getIntersectionOfCircles(const Circle& c0, const Circle& c1, Ve
   return 1;
 }
 
-void SelfLocator::intersectionPointInsideField(std::vector<SampleTemplate>& sampleTemplates,
-    const Vector2<double>& p1, const Vector2<double>& p2)
+bool SelfLocator::isInsideCarpet(const Vector2<double> &p) const
 {
-  if (fieldBoundary->isInside(p1))
-  {
-    SampleTemplate sampleTemplate;
-    sampleTemplate.translation.x = p1.x;
-    sampleTemplate.translation.y = p1.y;
-    sampleTemplates.push_back(sampleTemplate);
-  }
-
-  if (fieldBoundary->isInside(p2))
-  {
-    SampleTemplate sampleTemplate;
-    sampleTemplate.translation.x = p2.x;
-    sampleTemplate.translation.y = p2.y;
-    sampleTemplates.push_back(sampleTemplate);
-  }
+  return fieldBoundary->isInside(p);
 }

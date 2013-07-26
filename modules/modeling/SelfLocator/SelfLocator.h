@@ -36,7 +36,7 @@ END_MODULE
 #include <vector>
 #include <map>
 #include <cmath>
-#include <algorithm>
+#include <sstream>
 
 #include "math/Vector3.h"
 #include "math/Probabilistics.h"
@@ -257,19 +257,6 @@ class Circle
     }
 };
 
-class SampleTemplate: public Pose2D
-{
-  public:
-    SampleTemplate() :
-        Pose2D()
-    {
-    }
-
-    virtual ~SampleTemplate()
-    {
-    }
-};
-
 class SelfLocator: public SelfLocatorBase
 {
   protected:
@@ -282,9 +269,9 @@ class SelfLocator: public SelfLocatorBase
     double alpha4;
 
     double resamplingThreshold;
-    double standardDeviationBearingDistance;
+    double standardDeviationDistance;
     double standardDeviationAngle;
-    double standardDeviationSampleBearingDistance;
+    double standardDeviationSampleDistance;
 
     // Sample set
     SampleSet* samples;
@@ -301,8 +288,8 @@ class SelfLocator: public SelfLocatorBase
     std::map<GOALPOST_ID, Vector2<double> > goals;
 
     // Model, observation
-    typedef std::vector<std::pair<Vector2<double>, Vector3<double> > > SelectedObservations;
-    SelectedObservations selectedObservations;
+    std::vector<Vector2<double> > selectedModels;
+    std::vector<Vector2<double> > selectedObservations;
 
     RobotPose robotPose;
     Pose2D prevOdometry;
@@ -325,27 +312,20 @@ class SelfLocator: public SelfLocatorBase
     void resampling();
     void generateTemplate(Sample* currentSample, Sample* nextSample);
 
-    double computeAngleWeighting(const Vector2<double> measuredPosition,
-        const Vector2<double>& modelPosition, const Pose2D& robotPose, double standardDeviation,
-        double bestPossibleWeighting);
-    double computeDistanceWeighting(const Vector2<double> measuredPosition,
-        const Vector2<double>& modelPosition, const Pose2D& robotPose, double standardDeviation,
-        double bestPossibleWeighting);
+    double computeAngleWeighting(const Pose2D& robotPose, const Vector2<double>& modelPosition,
+        const Vector2<double>& observedPosition);
+    double computeDistanceWeighting(const Pose2D& robotPose, const Vector2<double>& modelPosition,
+        const Vector2<double>& observedPosition);
     double computeWeightings(Sample* sample, const Vector2<double>& modelPosition,
-        const Vector2<double>& observedPosition, const double distanceStandardDeviation,
-        const double angleStandardDeviation);
+        const Vector2<double>& observedPosition);
 
     void generateTemplateFromPosts(Sample* currentSample, Sample* nextSample);
     int getIntersectionOfCircles(const Circle& c0, const Circle& c1, Vector2<double>& p1,
         Vector2<double>& p2);
-    void intersectionPointInsideField(std::vector<SampleTemplate>& sampleTemplates,
-        const Vector2<double>& p1, const Vector2<double>& p2);
+    bool isInsideCarpet(const Vector2<double> &p) const;
 
     Vector3<double> toVector(const Polar& polar) const;
     void draw() const;
-
-    // TODO: motion update
-    // TODO: other stuff
 
 };
 

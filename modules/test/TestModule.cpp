@@ -31,8 +31,11 @@ void TestModule::update(BeamRequest& theBeamRequest)
   if (startTime < 100)
   {
     ++startTime;
+    myBeamRequest.translation.x = config.getValue("beamRequest.x", -5.0f);
+    myBeamRequest.translation.y = config.getValue("beamRequest.y", 0.0f);
+    myBeamRequest.rotation = config.getValue("beamRequest.rotation", 0.0f) * M_PI / 180.0f;
     theBeamRequest.active = true;
-    theBeamRequest.pose.translation.x = -5.0f;
+    theBeamRequest.pose = myBeamRequest;
   }
   else
   {
@@ -78,25 +81,25 @@ void TestModule::update(MotionRequest& theMotionRequest)
 
   if (config.getValue("drawHeadCoordinateSystem", true))
   {
-    Pose3D cameraMatrix = Pose3D();
 
-    // first the common part
+    // Drawing the coordinate frame
+    Pose3D robotPose = Pose3D();
+    robotPose.translate(theRobotPose->pose.translation.x, theRobotPose->pose.translation.y, 0.0f);
+    robotPose.rotateZ(theRobotPose->pose.rotation);
+    robotPose.conc(*theTorsoPose);
+
+    Pose3D cameraMatrix = Pose3D();
     cameraMatrix.translate(0, 0.005, 0.09 + 0.065);
     cameraMatrix.rotateZ(theJointData->values[JID_HEAD_PAN].angle);
     cameraMatrix.rotateY(-theJointData->values[JID_HEAD_TILT].angle);
+    robotPose.conc(cameraMatrix);
 
-    Pose3D coordianteFrame = *theTorsoPose;
-    coordianteFrame.conc(cameraMatrix);
-
-    // Drawing the coordinate frame
-    Pose3D robotPose(-5.0, 0, 0);
-
-    Vector3<double> v1 = robotPose * coordianteFrame.translation;
-    Vector3<double> v2 = robotPose * (coordianteFrame * Vector3<double>(1, 0, 0));
+    Vector3<double> v1 = robotPose.translation;
+    Vector3<double> v2 = robotPose * Vector3<double>(1, 0, 0);
     drawing.line("CoordianteFramex", v1.x, v1.y, v1.z, v2.x, v2.y, v2.z, 255, 0, 0, 2);
-    Vector3<double> v3 = robotPose * (coordianteFrame * Vector3<double>(0, 1, 0));
+    Vector3<double> v3 = robotPose * Vector3<double>(0, 1, 0);
     drawing.line("CoordianteFramey", v1.x, v1.y, v1.z, v3.x, v3.y, v3.z, 0, 255, 0, 2);
-    Vector3<double> v4 = robotPose * (coordianteFrame * Vector3<double>(0, 0, 1));
+    Vector3<double> v4 = robotPose * Vector3<double>(0, 0, 1);
     drawing.line("CoordianteFramez", v1.x, v1.y, v1.z, v4.x, v4.y, v4.z, 0, 0, 255, 2);
   }
 }

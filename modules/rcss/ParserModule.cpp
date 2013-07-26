@@ -58,6 +58,7 @@ void ParserModule::init()
   frameNumber = 0;
   lastMessageTime = 0;
   messageTime = 0;
+  team = NUM_TEAM_ID;
 
   // Joint translation map
   joint_name_2_id.insert(std::pair<std::string, JOINT_ID>("hj1", JID_HEAD_PAN));
@@ -195,7 +196,8 @@ void ParserModule::parseExpr()
     if (strcmp(data[1].c_str(), SEXP_self) != 0)
     {
       sscanf(data[1].c_str(), "%f", &direction);
-    } else
+    }
+    else
     {
       self = true;
     }
@@ -384,10 +386,9 @@ void ParserModule::parseExpr()
             sexp_t* atom = innerVarList->list->next;
             parseInt(atom, playerID);
           }
-          else if (SEXP_COMPARE(innerVarList, SEXP_head)
-              || SEXP_COMPARE(innerVarList, SEXP_rlowerarm)
-              || SEXP_COMPARE(innerVarList, SEXP_llowerarm)
-              || SEXP_COMPARE(innerVarList, SEXP_rfoot) || SEXP_COMPARE(innerVarList, SEXP_lfoot))
+          else if (SEXP_COMPARE(innerVarList, SEXP_head) || SEXP_COMPARE(innerVarList, SEXP_rlowerarm)
+              || SEXP_COMPARE(innerVarList, SEXP_llowerarm) || SEXP_COMPARE(innerVarList, SEXP_rfoot)
+              || SEXP_COMPARE(innerVarList, SEXP_lfoot))
           {
             std::string body_part_identifier(innerVarList->list->val, strlen(innerVarList->list->val));
             //printf("\t Part name: [%s]\n", partName.c_str());
@@ -401,7 +402,6 @@ void ParserModule::parseExpr()
 
         } while ((innerVarList = innerVarList->next) != 0);
       }
-
 
       varlist = varlist->next; // ()(x)
     }
@@ -535,13 +535,10 @@ void ParserModule::setForce(const std::string name, const float x, const float y
   }
 }
 
-
 void ParserModule::setRobotPartPercept(const std::string& team, const int& payerId,
-    const std::string& body_part_identifier, const float distance, const float azimuth,
-    const float elevation)
+    const std::string& body_part_identifier, const float distance, const float azimuth, const float elevation)
 {
-  std::vector<PartPercept> &robotPartsCurrent =
-      (team == ownTeamname ? robotPartsOwn : robotPartsOpp);
+  std::vector<PartPercept> &robotPartsCurrent = (team == ownTeamname ? robotPartsOwn : robotPartsOpp);
   PartPercept part;
   part.unum = payerId;
   part.type = translate_robot_part(body_part_identifier);
@@ -569,8 +566,7 @@ const Gamestate::PLAYMODES ParserModule::translate_playmode(const std::string& p
   return (iter != map.end()) ? iter->second : Gamestate::NUM_PLAYMODES;
 }
 
-const PartPercept::ROBOT_PART ParserModule::translate_robot_part(
-    const std::string& body_part_identifier) const
+const PartPercept::ROBOT_PART ParserModule::translate_robot_part(const std::string& body_part_identifier) const
 {
   std::map<std::string, PartPercept::ROBOT_PART>::const_iterator iter = identifier_2_body_part.find(
       body_part_identifier);
@@ -589,7 +585,7 @@ void ParserModule::update(FrameInfo& theFrameInfo)
 }
 void ParserModule::update(PlayerInfo& thePlayerInfo)
 {
-  thePlayerInfo.isValid = true;
+  thePlayerInfo.isValid = (team != NUM_TEAM_ID);
   thePlayerInfo.unum = unum;
   thePlayerInfo.team = team;
   thePlayerInfo.teamname = ownTeamname;
@@ -619,40 +615,46 @@ void ParserModule::update(BallPercept& theBallPercept)
 void ParserModule::update(FlagPercept& theFlagPercept)
 {
   theFlagPercept.flags.clear();
-  std::map<std::string, Polar>::iterator iter;
-  iter = staticVisionObjects.find("F2R");
-  if (iter != staticVisionObjects.end())
-    theFlagPercept.flags.insert(std::make_pair((team == TEAM_RIGHT ? FLAG_OWN_LEFT : FLAG_FOE_RIGHT), iter->second));
-  iter = staticVisionObjects.find("F1R");
-  if (iter != staticVisionObjects.end())
-    theFlagPercept.flags.insert(std::make_pair((team == TEAM_RIGHT ? FLAG_OWN_RIGHT : FLAG_FOE_LEFT), iter->second));
-  iter = staticVisionObjects.find("F2L");
-  if (iter != staticVisionObjects.end())
-    theFlagPercept.flags.insert(std::make_pair((team == TEAM_RIGHT ? FLAG_FOE_LEFT : FLAG_OWN_RIGHT), iter->second));
-  iter = staticVisionObjects.find("F1L");
-  if (iter != staticVisionObjects.end())
-    theFlagPercept.flags.insert(std::make_pair((team == TEAM_RIGHT ? FLAG_FOE_RIGHT : FLAG_OWN_LEFT), iter->second));
+  if (team != NUM_TEAM_ID)
+  {
+    std::map<std::string, Polar>::iterator iter;
+    iter = staticVisionObjects.find("F2R");
+    if (iter != staticVisionObjects.end())
+      theFlagPercept.flags.insert(std::make_pair((team == TEAM_RIGHT ? FLAG_OWN_LEFT : FLAG_FOE_RIGHT), iter->second));
+    iter = staticVisionObjects.find("F1R");
+    if (iter != staticVisionObjects.end())
+      theFlagPercept.flags.insert(std::make_pair((team == TEAM_RIGHT ? FLAG_OWN_RIGHT : FLAG_FOE_LEFT), iter->second));
+    iter = staticVisionObjects.find("F2L");
+    if (iter != staticVisionObjects.end())
+      theFlagPercept.flags.insert(std::make_pair((team == TEAM_RIGHT ? FLAG_FOE_LEFT : FLAG_OWN_RIGHT), iter->second));
+    iter = staticVisionObjects.find("F1L");
+    if (iter != staticVisionObjects.end())
+      theFlagPercept.flags.insert(std::make_pair((team == TEAM_RIGHT ? FLAG_FOE_RIGHT : FLAG_OWN_LEFT), iter->second));
+  }
 }
 void ParserModule::update(GoalPercept& theGoalPercept)
 {
   theGoalPercept.goalposts.clear();
-  std::map<std::string, Polar>::iterator iter;
-  iter = staticVisionObjects.find("G2R");
-  if (iter != staticVisionObjects.end())
-    theGoalPercept.goalposts.insert(
-        std::make_pair((team == TEAM_RIGHT ? GOALPOST_OWN_LEFT : GOALPOST_FOE_RIGHT), iter->second));
-  iter = staticVisionObjects.find("G1R");
-  if (iter != staticVisionObjects.end())
-    theGoalPercept.goalposts.insert(
-        std::make_pair((team == TEAM_RIGHT ? GOALPOST_OWN_RIGHT : GOALPOST_FOE_LEFT), iter->second));
-  iter = staticVisionObjects.find("G2L");
-  if (iter != staticVisionObjects.end())
-    theGoalPercept.goalposts.insert(
-        std::make_pair((team == TEAM_RIGHT ? GOALPOST_FOE_LEFT : GOALPOST_OWN_RIGHT), iter->second));
-  iter = staticVisionObjects.find("G1L");
-  if (iter != staticVisionObjects.end())
-    theGoalPercept.goalposts.insert(
-        std::make_pair((team == TEAM_RIGHT ? GOALPOST_FOE_RIGHT : GOALPOST_OWN_LEFT), iter->second));
+  if (team != NUM_TEAM_ID)
+  {
+    std::map<std::string, Polar>::iterator iter;
+    iter = staticVisionObjects.find("G2R");
+    if (iter != staticVisionObjects.end())
+      theGoalPercept.goalposts.insert(
+          std::make_pair((team == TEAM_RIGHT ? GOALPOST_OWN_LEFT : GOALPOST_FOE_RIGHT), iter->second));
+    iter = staticVisionObjects.find("G1R");
+    if (iter != staticVisionObjects.end())
+      theGoalPercept.goalposts.insert(
+          std::make_pair((team == TEAM_RIGHT ? GOALPOST_OWN_RIGHT : GOALPOST_FOE_LEFT), iter->second));
+    iter = staticVisionObjects.find("G2L");
+    if (iter != staticVisionObjects.end())
+      theGoalPercept.goalposts.insert(
+          std::make_pair((team == TEAM_RIGHT ? GOALPOST_FOE_LEFT : GOALPOST_OWN_RIGHT), iter->second));
+    iter = staticVisionObjects.find("G1L");
+    if (iter != staticVisionObjects.end())
+      theGoalPercept.goalposts.insert(
+          std::make_pair((team == TEAM_RIGHT ? GOALPOST_FOE_RIGHT : GOALPOST_OWN_LEFT), iter->second));
+  }
 }
 
 void ParserModule::update(SensorData& theSensorData)
@@ -665,8 +667,11 @@ void ParserModule::update(Gamestate& theGamestate)
   theGamestate.gametime = this->gametime;
   if (team == TEAM_RIGHT)
     theGamestate.playmode = translate_playmode(playmode, pm_name_2_id2);
-  else
+  else if (team == TEAM_LEFT)
     theGamestate.playmode = translate_playmode(playmode, pm_name_2_id);
+  else
+  {/**nothing*/
+  }
 }
 void ParserModule::update(Groundtruth& theGroundtruth)
 {

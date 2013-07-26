@@ -17,6 +17,7 @@
 #include "representations/perception/HearMessage.h"
 #include "representations/modeling/FallState.h"
 #include "representations/modeling/TorsoPose.h"
+#include "representations/modeling/RobotPose.h"
 
 #include "representations/rcss/SayMessage.h"
 #include "representations/rcss/BeamRequest.h"
@@ -36,6 +37,7 @@ MODULE(TestModule)
   REQUIRES(HearMessage)
   REQUIRES(FallState)
   REQUIRES(TorsoPose)
+  REQUIRES(RobotPose)
   // Only for testing purposes
   PROVIDES(SayMessage)
   PROVIDES(BeamRequest)
@@ -62,6 +64,7 @@ class TestModule: public TestModuleBase
 
   private:
     uint32_t lastTime;
+    Pose2D myBeamRequest;
 };
 
 #endif /* TESTMODULE_H_ */
