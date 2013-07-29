@@ -19,14 +19,20 @@
 
 // bool to indicate whether to continue the agent mainloop
 static bool gLoop = true;
+static int gLoopCount = 0;
 
 // SIGINT handler prototype
 void signal_callback_handler(int signum)
 {
   if (signum == SIGINT)
   {
-    std::cout << "signal=" << signum << std::endl;
+    std::cout << "signal=" << signum << ":" << (++gLoopCount) << std::endl;
     gLoop = false;
+    if (gLoopCount > 5)
+    {
+      std::cout << "Force exit()" << std::endl;
+      exit(EXIT_FAILURE);
+    }
   }
 }
 

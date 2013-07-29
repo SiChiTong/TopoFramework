@@ -10,11 +10,12 @@ class FieldDimensions: public FieldDimensionsBase
   public:
 
     FieldDimensions() :
-        initialized(false), length(0), halfLength(0), width(0), halfWidth(0), borderStripWidth(0), lengthPlusBorder(
-            0), halfLengthPlusBorder(0), widthPlusBorder(0), halfWidthPlusBorder(0), goalWidth(0), halfGoalWidth(
-            0), goalDepth(0), goalHeight(0), goalPostRadius(0), lineWidth(0), penaltyAreaWidth(0), halfPenaltyAreaWidth(
-            0), penaltyAreaDepth(0), centerCircleRadius(0), ballRadius(0), penaltyMarkSize(0), penaltyMarkDistance(
-            0), freeKickDistance(0), freeKickMoveDist(0), goalKickDistance(0)
+        initialized(false), length(0), halfLength(0), width(0), halfWidth(0), borderStripWidth(0), borderStripLength(
+            0), lengthPlusBorder(0), halfLengthPlusBorder(0), widthPlusBorder(0), halfWidthPlusBorder(
+            0), goalWidth(0), halfGoalWidth(0), goalDepth(0), goalHeight(0), goalPostRadius(0), lineWidth(
+            0), penaltyAreaWidth(0), halfPenaltyAreaWidth(0), penaltyAreaDepth(0), centerCircleRadius(
+            0), ballRadius(0), penaltyMarkSize(0), penaltyMarkDistance(0), freeKickDistance(0), freeKickMoveDist(
+            0), goalKickDistance(0)
     {
     }
     bool initialized;
@@ -26,6 +27,7 @@ class FieldDimensions: public FieldDimensionsBase
     float halfWidth;
 
     float borderStripWidth;
+    float borderStripLength;
     float lengthPlusBorder;
     float halfLengthPlusBorder;
     float widthPlusBorder;

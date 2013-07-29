@@ -122,7 +122,8 @@ void Communication::putMessage(const std::string& msg)
 
 bool Communication::getMessage(std::string& msg)
 {
-  static char buffer[16 * 1024];
+  const int buffersize = 64 * 1024;
+  static char buffer[buffersize];
 
   unsigned int bytesRead = 0;
   while (bytesRead < sizeof(unsigned int))
@@ -146,8 +147,21 @@ bool Communication::getMessage(std::string& msg)
   //printf ("xxx-%s\n", buffer+5);
 
   // msg is prefixed with it's total length
-  // TODO: fixMe
-  int msgLen = ntohl(*(unsigned int*) buffer);
+  //int msgLen = ntohl(*(unsigned int*) buffer);
+  // I used the RoboCanes fix
+  unsigned int lenByte0 = ((unsigned char*) buffer)[0];
+  unsigned int lenByte1 = ((unsigned char*) buffer)[1];
+  unsigned int lenByte2 = ((unsigned char*) buffer)[2];
+  unsigned int lenByte3 = ((unsigned char*) buffer)[3];
+
+  int msgLen = (lenByte0 << 24) | (lenByte1 << 16) | (lenByte2 << 8) | lenByte3;
+
+  if (msgLen > buffersize)
+  {
+    printf("msgLen %d\n", msgLen);
+    return "";
+  }
+
 
   // cerr << "GM 6 / " << msgLen << " (bytesRead " << bytesRead << ")\n";
   if (sizeof(unsigned int) + msgLen > sizeof(buffer))

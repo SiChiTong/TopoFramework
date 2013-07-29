@@ -71,8 +71,10 @@ void InputModule::update(FieldDimensions& theFieldDimensions)
   theFieldDimensions.halfWidth = 0.5f * theFieldDimensions.width;
 
   theFieldDimensions.borderStripWidth = configFieldDimensions.getValue("borderStripWidth", -1.0f);
+  theFieldDimensions.borderStripLength = configFieldDimensions.getValue("borderStripLength", -1.0f);
+
   theFieldDimensions.lengthPlusBorder = theFieldDimensions.length
-      + theFieldDimensions.borderStripWidth * 2.0f;
+      + theFieldDimensions.borderStripLength * 2.0f;
   theFieldDimensions.halfLengthPlusBorder = 0.5f * theFieldDimensions.lengthPlusBorder;
   theFieldDimensions.widthPlusBorder = theFieldDimensions.width
       + theFieldDimensions.borderStripWidth * 2.0f;

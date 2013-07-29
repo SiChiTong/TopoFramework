@@ -1,6 +1,8 @@
 #ifndef POLAR_H
 #define POLAR_H
 
+#include "Vector3.h"
+#include <cmath>
 /**
  * This class implements a structure for keeping polar coordinates.
  */
@@ -74,7 +76,15 @@ class Polar{
         return !(operator==(polar));
     }
 
-
+    // Convert this polar to Vector3 representation.
+    inline Vector3<double> toVector() const
+    {
+      Vector3<double> vec;
+      vec.x = distance * std::cos(elevation * M_PI / 180.0) * std::cos(azimuth * M_PI / 180.0);
+      vec.y = distance * std::cos(elevation * M_PI / 180.0) * std::sin(azimuth * M_PI / 180.0);
+      vec.z = distance * std::sin(elevation * M_PI / 180.0);
+      return vec;
+    }
 };
 
 
