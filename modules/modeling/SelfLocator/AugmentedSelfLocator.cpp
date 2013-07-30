@@ -422,8 +422,8 @@ void AugmentedSelfLocator::draw() const
   for (unsigned i = 0; i < supParticles; i++)
   {
     drawing.point("SelfLocator.xy", x[i], y[i], 0, 5, 0, 0, 0);
-    drawing.line("SelfLocator.theta", x[i], y[i], 0, x[i] + cos(z[i]), y[i] + sin(z[i]), 0, 255, 0,
-        0, 0.005);
+    drawing.line("SelfLocator.theta", x[i], y[i], 0, x[i] + 0.5 * cos(z[i]), y[i] + 0.5 * sin(z[i]),
+        0, 255, 0, 0, 0.05);
   }
 }
 
