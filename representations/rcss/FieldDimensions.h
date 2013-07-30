@@ -1,7 +1,7 @@
 #ifndef FIELDDIMENSIONS_H
 #define FIELDDIMENSIONS_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 REPRESENTATION(FieldDimensions)
 

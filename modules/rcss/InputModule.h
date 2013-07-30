@@ -8,7 +8,7 @@
 #ifndef INPUTMODULE_H_
 #define INPUTMODULE_H_
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "kernel/Communication.h"
 #include "representations/rcss/ServerMessage.h"
 #include "representations/rcss/FieldDimensions.h"

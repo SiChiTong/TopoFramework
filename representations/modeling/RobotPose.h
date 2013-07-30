@@ -5,7 +5,7 @@
 #ifndef ROBOTPOSE_H
 #define ROBOTPOSE_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Pose2D.h"
 #include "math/Vector3.h"
 

@@ -8,7 +8,7 @@
 #ifndef SERVERMESSAGE_H_
 #define SERVERMESSAGE_H_
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include <string>
 
 REPRESENTATION(ServerMessage)

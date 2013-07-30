@@ -1,7 +1,7 @@
 #ifndef WALKINGENGINEOUTPUT_H
 #define WALKINGENGINEOUTPUT_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "common/JointValues.h"
 #include "math/Pose2D.h"
 #include "math/Vector3.h"

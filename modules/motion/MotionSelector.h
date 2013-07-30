@@ -1,7 +1,7 @@
 #ifndef MOTIONSELECTOR_H
 #define MOTIONSELECTOR_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "representations/motion/MotionRequest.h"
 #include "representations/motion/MotionSelection.h"

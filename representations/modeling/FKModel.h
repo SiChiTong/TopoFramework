@@ -5,7 +5,7 @@
 #ifndef FKMODEL_H
 #define FKMODEL_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "common/JointValues.h"
 #include "common/RobotModel.h"
 

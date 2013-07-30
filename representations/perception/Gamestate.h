@@ -1,7 +1,7 @@
 #ifndef GAMESTATE_H
 #define GAMESTATE_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 REPRESENTATION(Gamestate)
 

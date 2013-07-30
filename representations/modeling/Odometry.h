@@ -1,7 +1,7 @@
 #ifndef ODOMETRY_H
 #define ODOMETRY_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Pose2D.h"
 
 REPRESENTATION(Odometry)

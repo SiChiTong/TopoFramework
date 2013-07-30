@@ -1,7 +1,7 @@
 #ifndef PLAYERINFO_H
 #define PLAYERINFO_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 REPRESENTATION(PlayerInfo)
 

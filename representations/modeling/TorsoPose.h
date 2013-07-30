@@ -5,7 +5,7 @@
 #ifndef TORSOPOSE_H
 #define TORSOPOSE_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Pose3D.h"
 #include <sstream>
 

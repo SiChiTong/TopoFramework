@@ -1,7 +1,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "representations/rcss/ServerMessage.h"
 
 #include "representations/perception/FrameInfo.h"

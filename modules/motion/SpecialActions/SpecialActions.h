@@ -1,7 +1,7 @@
 #ifndef SPECIALACTIONS_H
 #define SPECIALACTIONS_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include <map>
 #include <string>

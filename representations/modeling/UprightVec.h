@@ -5,7 +5,7 @@
 #ifndef UPRIGHTVEC_H
 #define UPRIGHTVEC_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Vector3.h"
 
 REPRESENTATION(UprightVec)

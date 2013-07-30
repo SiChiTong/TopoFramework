@@ -1,7 +1,7 @@
 #ifndef MOTIONCOMBINATOR_H
 #define MOTIONCOMBINATOR_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "representations/motion/MotionSelection.h"
 #include "representations/motion/SpecialActionsOutput.h"

@@ -3,7 +3,7 @@
 
 #include <vector>
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Polar.h"
 
 #undef HEAD // for mac users with random compatibility issues :)

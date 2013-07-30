@@ -1,7 +1,7 @@
 #ifndef WALKINGENGINE_H
 #define WALKINGENGINE_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Vector3.h"
 
 #include "representations/perception/FrameInfo.h"

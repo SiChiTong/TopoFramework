@@ -8,7 +8,7 @@
 #ifndef AUGMENTEDSELFLOCATOR_H_
 #define AUGMENTEDSELFLOCATOR_H_
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "representations/rcss/FieldDimensions.h"
 #include "representations/perception/FlagPercept.h"

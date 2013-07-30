@@ -1,7 +1,7 @@
 #ifndef JOINTPDCONTROL_H
 #define JOINTPDCONTROL_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "representations/perception/FrameInfo.h"
 #include "representations/perception/JointData.h"

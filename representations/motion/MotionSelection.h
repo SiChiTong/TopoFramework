@@ -1,7 +1,7 @@
 #ifndef MOTIONSELECTION_H
 #define MOTIONSELECTION_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "representations/motion/MotionRequest.h"
 
 REPRESENTATION(MotionSelection)

@@ -1,7 +1,7 @@
 #ifndef FALLSTATE_H
 #define FALLSTATE_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "math/Polar.h"
 

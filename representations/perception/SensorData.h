@@ -1,7 +1,7 @@
 #ifndef SENSORDATA_H
 #define SENSORDATA_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Vector3.h"
 
 REPRESENTATION(SensorData)

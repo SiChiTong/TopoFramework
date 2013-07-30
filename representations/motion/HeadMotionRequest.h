@@ -1,7 +1,7 @@
 #ifndef HEADMOTIONREQUEST_H
 #define HEADMOTIONREQUEST_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 REPRESENTATION(HeadMotionRequest)
 

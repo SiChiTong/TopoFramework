@@ -1,7 +1,7 @@
 #ifndef JOINTREQUESTWITHSPEEDS_H
 #define JOINTREQUESTWITHSPEEDS_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "common/JointValues.h"
 
 REPRESENTATION(JointRequestWithSpeeds)

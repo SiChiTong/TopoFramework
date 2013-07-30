@@ -1,7 +1,7 @@
 #ifndef BALLPERCEPT_H
 #define BALLPERCEPT_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "math/Polar.h"
 #include "math/Matrix.h"

@@ -8,7 +8,7 @@
 #ifndef DRAWINGMODULE_H_
 #define DRAWINGMODULE_H_
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "kernel/Drawing.h"
 #include "representations/perception/PlayerInfo.h"
 

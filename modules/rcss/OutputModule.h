@@ -8,7 +8,7 @@
 #ifndef OUTPUTMODULE_H_
 #define OUTPUTMODULE_H_
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "kernel/Communication.h"
 #include "representations/motion/JointRequestWithSpeeds.h"
 #include "representations/rcss/SayMessage.h"

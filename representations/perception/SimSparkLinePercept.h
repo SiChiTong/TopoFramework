@@ -1,7 +1,7 @@
 #ifndef SimSparkLinePercept_H
 #define SimSparkLinePercept_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 REPRESENTATION(SimSparkLinePercept)
 
 #include <vector>

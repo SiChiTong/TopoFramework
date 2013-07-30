@@ -10,7 +10,7 @@
 #ifndef ACCEVALUATOR_H
 #define ACCEVALUATOR_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "representations/perception/FrameInfo.h"
 #include "representations/perception/SensorData.h"

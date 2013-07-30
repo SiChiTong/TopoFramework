@@ -8,7 +8,7 @@
 #ifndef BALLLOCATOR_H
 #define BALLLOCATOR_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "representations/perception/BallPercept.h"
 #include "representations/perception/JointData.h"

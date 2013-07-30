@@ -8,7 +8,7 @@
 #ifndef TESTONEMODULE_H_
 #define TESTONEMODULE_H_
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "representations/test/TestOneRepresentation.h"
 #include "representations/test/TestTwoRepresentation.h"
 #include "representations/test/TestThreeRepresentation.h"

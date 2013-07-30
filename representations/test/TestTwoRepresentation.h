@@ -8,7 +8,7 @@
 #ifndef TESTTWOREPRESENTATION_H_
 #define TESTTWOREPRESENTATION_H_
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 REPRESENTATION(TestTwoRepresentation)
 class TestTwoRepresentation: public TestTwoRepresentationBase

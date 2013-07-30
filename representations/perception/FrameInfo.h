@@ -1,7 +1,7 @@
 #ifndef FRAMEINFO_H
 #define FRAMEINFO_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 REPRESENTATION(FrameInfo)
 

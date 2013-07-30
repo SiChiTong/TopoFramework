@@ -1,7 +1,7 @@
 #ifndef BEAMREQUEST_H
 #define BEAMREQUEST_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Pose2D.h"
 
 REPRESENTATION(BeamRequest)

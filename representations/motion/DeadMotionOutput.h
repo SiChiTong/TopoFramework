@@ -1,7 +1,7 @@
 #ifndef DEADMOTIONOUTPUT_H
 #define DEADMOTIONOUTPUT_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "common/JointValues.h"
 
 REPRESENTATION(DeadMotionOutput)

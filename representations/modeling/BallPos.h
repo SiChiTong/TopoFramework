@@ -5,7 +5,7 @@
 #ifndef BALLPOS_H
 #define BALLPOS_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "math/Vector2.h"
 
 /** 

@@ -1,7 +1,7 @@
 #ifndef JOINTDATA_H
 #define JOINTDATA_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include "common/JointValues.h"
 
 REPRESENTATION(JointData)

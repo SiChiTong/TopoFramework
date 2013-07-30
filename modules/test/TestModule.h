@@ -8,7 +8,7 @@
 #ifndef TESTMODULE_H_
 #define TESTMODULE_H_
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 
 #include "representations/perception/JointData.h"
 #include "representations/perception/FrameInfo.h"

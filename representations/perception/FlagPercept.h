@@ -1,7 +1,7 @@
 #ifndef FLAGPERCEPT_H
 #define FLAGPERCEPT_H
 
-#include "kernel/Framework.h"
+#include "kernel/Template.h"
 #include <map>
 #include "math/Polar.h"
 
