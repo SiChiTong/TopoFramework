@@ -179,6 +179,11 @@ void SpecialActions::update(SpecialActionsOutput& theSpecialActionsOutput)
   }
 }
 
+void SpecialActions::update(SpecialMotionsOutput& theSpecialMotionsOutput)
+{
+  // fixMe: is this necessary
+}
+
 void SpecialActions::reset()
 {
   // get the current action

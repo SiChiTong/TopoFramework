@@ -43,8 +43,7 @@ void InputModule::update(ServerMessage& theServerMessage)
     ssMsgNao << "(scene " << rcssAgent << ")";
     ssMsgInit << "(init " << "(unum " << initUnum << ")(teamname " << initTeamname << "))(syn)";
     ime::Communication& com = ime::Communication::getInstance();
-    com.initInstance(config.getValue("rcssHost", std::string("127.0.0.1")),
-        config.getValue("rcssPort", 3100));
+    com.initInstance(config.getValue("rcssHost", std::string("127.0.0.1")), config.getValue("rcssPort", 3100));
     com.putMessage(ssMsgNao.str());
     com.getMessage(theServerMessage.msg);
     com.putMessage(ssMsgInit.str());
@@ -73,11 +72,9 @@ void InputModule::update(FieldDimensions& theFieldDimensions)
   theFieldDimensions.borderStripWidth = configFieldDimensions.getValue("borderStripWidth", -1.0f);
   theFieldDimensions.borderStripLength = configFieldDimensions.getValue("borderStripLength", -1.0f);
 
-  theFieldDimensions.lengthPlusBorder = theFieldDimensions.length
-      + theFieldDimensions.borderStripLength * 2.0f;
+  theFieldDimensions.lengthPlusBorder = theFieldDimensions.length + theFieldDimensions.borderStripLength * 2.0f;
   theFieldDimensions.halfLengthPlusBorder = 0.5f * theFieldDimensions.lengthPlusBorder;
-  theFieldDimensions.widthPlusBorder = theFieldDimensions.width
-      + theFieldDimensions.borderStripWidth * 2.0f;
+  theFieldDimensions.widthPlusBorder = theFieldDimensions.width + theFieldDimensions.borderStripWidth * 2.0f;
   theFieldDimensions.halfWidthPlusBorder = 0.5f * theFieldDimensions.widthPlusBorder;
 
   //goal
@@ -107,6 +104,16 @@ void InputModule::update(FieldDimensions& theFieldDimensions)
   theFieldDimensions.goalKickDistance = configFieldDimensions.getValue("rcss.goalKickDistance", -1.0f);
 
   theFieldDimensions.initialized = true;
+}
+
+void InputModule::update(SkillKickParameters& theSkillKickParameters)
+{
+  if (!theSkillKickParameters.initialized)
+  {
+    theSkillKickParameters.initialized = true;
+    ime::Config kickParamConfig("SkillKickParameters", "config");
+    theSkillKickParameters.load(kickParamConfig);
+  }
 }
 
 MAKE_MODULE(InputModule)

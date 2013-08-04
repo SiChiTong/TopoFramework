@@ -59,6 +59,15 @@ class MotionRequest: public MotionRequestBase
     {
     }
 
+
+    void updateMotionRequest(const MotionRequest& that)
+    {
+      this->motion = that.motion;
+      this->walkRequest = that.walkRequest;
+      this->specialActionRequest = that.specialActionRequest;
+      this->kickSpeed = that.kickSpeed;
+    }
+
     void draw() const
     {
       if (motion == WALK)

@@ -11,6 +11,7 @@
 #include "representations/perception/PlayerInfo.h"
 #include "representations/motion/MotionRequest.h"
 #include "representations/motion/SpecialActionsOutput.h"
+#include "representations/motion/SpecialMotionsOutput.h"
 
 #include "SpecialAction.h"
 
@@ -22,6 +23,7 @@ MODULE(SpecialActions)
   REQUIRES(MotionRequest)
   //
   PROVIDES(SpecialActionsOutput)
+  PROVIDES(SpecialMotionsOutput)
 END_MODULE
 
 
@@ -41,6 +43,7 @@ class SpecialActions: public SpecialActionsBase
     SpecialActions();
     void init();
     void update(SpecialActionsOutput& theSpecialActionsOutput);
+    void update(SpecialMotionsOutput& theSpecialMotionsOutput);
 
   protected:
     void reset();

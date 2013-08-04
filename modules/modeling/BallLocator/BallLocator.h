@@ -13,22 +13,23 @@
 #include "representations/perception/BallPercept.h"
 #include "representations/perception/JointData.h"
 #include "representations/perception/FrameInfo.h"
-#include "representations/modeling/BallPos.h"
+#include "representations/modeling/TorsoPose.h"
 #include "representations/modeling/Odometry.h"
-#include "representations/modeling/UprightVec.h"
 #include "representations/modeling/RobotPose.h"
+#include "representations/modeling/BallPos.h"
 
 #include "utils/ekf/ekfilter.h"
 #include "math/Pose3D.h"
 
 MODULE(BallLocator)
   REQUIRES(BallPercept)
-  REQUIRES(UprightVec)
   REQUIRES(JointData)
-  REQUIRES(Odometry)
   REQUIRES(FrameInfo)
+  REQUIRES(TorsoPose)
+  REQUIRES(Odometry)
   REQUIRES(LocalRobotPose)
-  PROVIDES(BallPos)
+//
+  //PROVIDES(BallPos)
   PROVIDES(LocalBallPos)
 END_MODULE
 
@@ -92,6 +93,7 @@ class BallLocator: public BallLocatorBase
     void update(LocalBallPos& theLocalBallPos);
 
   private:
+    bool preExecute();
     void update(Vector2<double>& rel, Vector2<double>& abs, double& conf);
 
 

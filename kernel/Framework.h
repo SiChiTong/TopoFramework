@@ -10,10 +10,16 @@
 
 #include "Config.h"
 #include "Log.h"
+#include "Timer.h"
 #include "Drawing.h"
 #include <iostream>
 #include <vector>
 #include <map>
+#ifdef WIN32
+#include <unordered_map>
+#else
+#include <tr1/unordered_map>
+#endif
 #include <queue>
 #include <string>
 #include <stdint.h>
@@ -80,7 +86,7 @@ class Module : public ime::Node
   public: virtual void init() {}
   public: virtual void execute() {}
   public: ime::Config config;
-  public: ime::Log log;
+  //public: ime::Log log;
   public: ime::Drawing& drawing;
 };
 
@@ -90,7 +96,7 @@ class Representation: public ime::Node
   public: Representation() : ime::Node(), updateThis(0), drawing(Drawing::getInstance()) {}
   public: virtual ~Representation() {}
   public: virtual void draw() const {}
-  public: ime::Log log;
+  //public: ime::Log log;
   public: ime::Drawing& drawing;
 };
 
@@ -117,7 +123,7 @@ class TopoModule : public ime::TopoNode
       module->config.resurrect();
       module->init();
     }
-    void update() { module->execute(); module->log.update(); }
+    void update() { module->execute(); /*module->log.update();*/ }
     void release() { module->config.persist(); }
     const Node* getNode() const { return module; }
 };
@@ -131,7 +137,7 @@ class TopoRepresentation: public ime::TopoNode
     virtual ~TopoRepresentation() {}
     void allocate() {/** For later use */}
     void release()  {/** For later use */}
-    void update() { representation->updateThis(module, representation); representation->log.update(); representation->draw(); }
+    void update() { representation->updateThis(module, representation); /*representation->log.update();*/ representation->draw(); }
     const Node* getNode() const { return representation; }
 };
 
@@ -187,6 +193,10 @@ class Graph
     TopoQueue topoQueue;
     GraphOutput graphOutput;
 
+    // For timing
+    typedef std::tr1::unordered_map<std::string, ime::Timer*> Timers;
+    Timers timers;
+
     static Graph& getInstance();
     static void deleteInstance();
     void addModule(Node* theInstance);
@@ -202,6 +212,11 @@ class Graph
     void graphOutputUpdate();
     void graphOutputRelease();
     void graphDrawing();
+
+    void startTimer(const std::string& name);
+    void stopTimer(const std::string& name);
+    void removeTimer(const std::string& name);
+    void displayTimers();
 
   protected:
     Graph();

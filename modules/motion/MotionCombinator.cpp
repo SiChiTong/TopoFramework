@@ -18,9 +18,11 @@ void MotionCombinator::update(JointRequest& theJointRequest)
   if (theMotionSelection->targetMotion == MotionRequest::DEAD)
   {
     if (!theDeadMotionOutput->active)
-      log << "ERROR DeadMotion selected, but output not active!\n";
+    {
+      //log << "ERROR DeadMotion selected, but output not active!\n";
+    }
     theJointRequest.values = theDeadMotionOutput->values;
-    log << "motion from DeadMotion" << std::endl;
+    //log << "motion from DeadMotion" << std::endl;
   }
 
   //use joint speeds of KickMotion
@@ -29,18 +31,21 @@ void MotionCombinator::update(JointRequest& theJointRequest)
   else if (!prevSpecialActionActive && !prevSpecialMotionActive && theKickMotionOutput->active)
   {
     if (!theKickMotionOutput->active)
-      log << "ERROR motion Kick selected, but output not active!\n";
+    {
+      // log << "ERROR motion Kick selected, but output not active!\n";
+    }
     theJointRequest.values = theKickMotionOutput->values;
     theJointRequest.hasAlreadySpeeds = true; //skip joint PD-control
-    log << "motion from KickMotion" << std::endl;
+    //log << "motion from KickMotion" << std::endl;
   }
 
   //use joint angles of SpecialActions
-  else if (theSpecialActionsOutput->active && (!theSpecialMotionsOutput->active || !prevSpecialMotionActive))
+  else if (theSpecialActionsOutput->active
+      && (!theSpecialMotionsOutput->active || !prevSpecialMotionActive))
   {
     specialActionActive = true;
     theJointRequest.values = theSpecialActionsOutput->values;
-    log << "motion from SpecialActions" << std::endl;
+    //log << "motion from SpecialActions" << std::endl;
   }
 
 #ifndef TARGET_NAO
@@ -50,23 +55,28 @@ void MotionCombinator::update(JointRequest& theJointRequest)
     specialMotionActive = true;
     theJointRequest.values = theSpecialMotionsOutput->values;
     theJointRequest.hasAlreadySpeeds = true; //skip joint PD-control
-    log << "motion from SpecialMotions" << std::endl;
+    //log << "motion from SpecialMotions" << std::endl;
   }
 #endif
 
   //angles from WalkingEngine
   else if ((theMotionSelection->targetMotion == MotionRequest::WALK
-      || theMotionSelection->targetMotion == MotionRequest::STAND) && theWalkingEngineOutput->active)
+      || theMotionSelection->targetMotion == MotionRequest::STAND)
+      && theWalkingEngineOutput->active)
   {
     if (!theWalkingEngineOutput->active)
-      log << "ERROR motion WALK selected, but output not active!\n";
+    {
+      // log << "ERROR motion WALK selected, but output not active!\n";
+    }
     theJointRequest.values = theWalkingEngineOutput->values;
-    log << "motion from WalkingEngine" << std::endl;
+    // log << "motion from WalkingEngine" << std::endl;
   }
 
   //error
   else
-    log << "WARNING: No motion module active! No Joint angles set!" << std::endl;
+  {
+    // log << "WARNING: No motion module active! No Joint angles set!" << std::endl;
+  }
 
   prevSpecialActionActive = specialActionActive;
   prevSpecialMotionActive = specialMotionActive;

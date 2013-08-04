@@ -12,10 +12,12 @@
 #include "kernel/Communication.h"
 #include "representations/rcss/ServerMessage.h"
 #include "representations/rcss/FieldDimensions.h"
+#include "representations/skills/SkillKickParameters.h"
 
 MODULE(InputModule)
   PROVIDES(ServerMessage)
   PROVIDES(FieldDimensions)
+  PROVIDES(SkillKickParameters)
 END_MODULE
 
 class InputModule: public InputModuleBase
@@ -26,6 +28,7 @@ class InputModule: public InputModuleBase
     void init();
     void update(ServerMessage& theServerMessage);
     void update(FieldDimensions& theFieldDimensions);
+    void update(SkillKickParameters& theSkillKickParameters);
 
   private:
     bool connected;

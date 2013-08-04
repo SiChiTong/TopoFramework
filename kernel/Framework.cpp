@@ -40,6 +40,8 @@ ime::Graph::~Graph()
   for (ime::Graph::GraphOutput::iterator iter = graphOutput.begin(); iter != graphOutput.end();
       ++iter)
     delete *iter;
+  for (ime::Graph::Timers::iterator iter = timers.begin(); iter != timers.end(); ++iter)
+    delete iter->second;
 
   ime::Drawing::deleteInstance();
 }
@@ -325,7 +327,24 @@ void ime::Graph::graphOutputAllocate()
   {
     // 1) Init()
     (*iter)->allocate();
+    // 2.1) Execute() / 2.2) Update()
+    (*iter)->update();
   }
+}
+
+void ime::Graph::graphOutputUpdate()
+{
+  // 2) Execute / Update
+  for (ime::Graph::GraphOutput::iterator iter = graphOutput.begin(); iter != graphOutput.end();
+      ++iter)
+  {
+    //startTimer((*iter)->getNode()->getName());
+    // 2.1) Execute() / 2.2) Update()
+    (*iter)->update();
+    //stopTimer((*iter)->getNode()->getName());
+  }
+
+  //displayTimers();
 }
 
 void ime::Graph::graphOutputRelease()
@@ -339,22 +358,60 @@ void ime::Graph::graphOutputRelease()
   }
 }
 
-void ime::Graph::graphOutputUpdate()
-{
-  // 2) Execute / Update
-  for (ime::Graph::GraphOutput::iterator iter = graphOutput.begin(); iter != graphOutput.end();
-      ++iter)
-  {
-    // 2.1) Execute() / 2.2) Update()
-    (*iter)->update();
-  }
-}
-
 void ime::Graph::graphDrawing()
 {
   // 4) Drawing
   ime::Drawing& drawing = ime::Drawing::getInstance();
   drawing.send();
+}
+
+void ime::Graph::startTimer(const std::string& name)
+{
+  ime::Graph::Timers::iterator iter = timers.find(name);
+  if (iter == timers.end())
+  {
+    timers.insert(std::make_pair(name, new ime::Timer));
+  }
+  timers.find(name)->second->start();
+
+}
+
+void ime::Graph::stopTimer(const std::string& name)
+{
+  ime::Graph::Timers::iterator iter = timers.find(name);
+  if (iter != timers.end())
+  {
+    iter->second->stop();
+  }
+}
+
+void ime::Graph::removeTimer(const std::string& name)
+{
+  ime::Graph::Timers::iterator iter = timers.find(name);
+  if (iter != timers.end())
+  {
+    timers.erase(iter);
+  }
+}
+
+void ime::Graph::displayTimers()
+{
+  for (ime::Graph::GraphOutput::iterator iter = graphOutput.begin(); iter != graphOutput.end();
+      ++iter)
+  {
+    std::string name = (*iter)->getNode()->getName();
+    ime::Graph::Timers::iterator iter = timers.find(name);
+    if (iter != timers.end())
+    {
+      ime::Timer* timer = iter->second;
+      std::cout << name << "(" << timer->getElapsedTimeInMilliSec() << ") ";
+    }
+    else
+    {
+      std::cout << name << "(unknown) ";
+    }
+  }
+  std::cout << std::endl << std::endl;
 }
 
 std::ostream& ime::operator<<(std::ostream& out, const ime::Graph& that)

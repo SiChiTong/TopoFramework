@@ -108,6 +108,10 @@ void BallLocator::init()
 
 void BallLocator::execute()
 {
+  if (!preExecute())
+  {
+    return;
+  }
   // In degrees to be compatible with vision information
   float panAngle = theJointData->values[JID_HEAD_PAN].angle * 180. / M_PI;
   float tiltAngle = theJointData->values[JID_HEAD_TILT].angle * 180. / M_PI;
@@ -219,6 +223,12 @@ void BallLocator::execute()
 
   prevRotation = theLocalRobotPose->pose.rotation;
   prevOdometryForBall = theOdometry->pose;
+}
+
+bool BallLocator::preExecute()
+{
+  return (fabs(theTorsoPose->rotation.getXAngle()) < 0.26
+      && fabs(theTorsoPose->rotation.getYAngle()) < 0.26); // 15 degrees
 }
 
 void BallLocator::update(Vector2<double>& relativePos, Vector2<double>& absPos, double& conf)
