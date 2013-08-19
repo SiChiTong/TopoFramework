@@ -9,13 +9,10 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include "kernel/Framework.h"
-
-#include "utils/sexpr/sexp.h"
-#include "utils/sexpr/sexp_ops.h"
-#include "kernel/Config.h"
 #include <string.h>
 #include <cassert>
+#include "kernel/Framework.h"
+#include "kernel/Config.h"
 
 // bool to indicate whether to continue the agent mainloop
 static bool gLoop = true;
