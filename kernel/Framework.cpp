@@ -328,6 +328,19 @@ void ime::Graph::graphOutputAllocate()
     // 1) Init()
     (*iter)->allocate();
     // 2.1) Execute() / 2.2) Update()
+    // (*iter)->update();
+  }
+}
+
+void ime::Graph::graphOutputAllocateAndUpdate()
+{
+  // 1) Allocate
+  for (ime::Graph::GraphOutput::iterator iter = graphOutput.begin(); iter != graphOutput.end();
+      ++iter)
+  {
+    // 1) Init()
+    (*iter)->allocate();
+    // 2.1) Execute() / 2.2) Update()
     (*iter)->update();
   }
 }

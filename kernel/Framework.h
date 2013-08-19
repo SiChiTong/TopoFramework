@@ -209,6 +209,7 @@ class Graph
     void computeGraph();
     void topoSort();
     void graphOutputAllocate();
+    void graphOutputAllocateAndUpdate();
     void graphOutputUpdate();
     void graphOutputRelease();
     void graphDrawing();

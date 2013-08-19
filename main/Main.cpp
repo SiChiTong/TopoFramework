@@ -42,7 +42,7 @@ void topoSignal()
 void topoLoop()
 {
   ime::Graph& graph = ime::Graph::getInstance();
-  graph.graphOutputAllocate();
+  graph.graphOutputAllocateAndUpdate();
   while (gLoop)
   {
     graph.graphOutputUpdate();
