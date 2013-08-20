@@ -13,8 +13,8 @@
 // send and receive messages any point in the execution cycle.
 
 #include <iostream>
-#include "utils/net/TCPSocket.hpp"
-#include "utils/net/Exception.hpp"
+#include "kernel/net/TCPSocket.hpp"
+#include "kernel/net/Exception.hpp"
 
 namespace ime
 {

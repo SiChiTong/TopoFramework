@@ -14,7 +14,7 @@
 #include <cstdio>
 
 #include "math/Pose2D.h"
-#include "utils/net/UDPSocket.hpp"
+#include "kernel/net/UDPSocket.hpp"
 
 namespace ime
 {
