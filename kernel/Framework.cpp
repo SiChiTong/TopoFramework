@@ -88,8 +88,8 @@ void ime::Graph::providedRepresentation(const char* moduleName, ime::Node* theIn
   {
     if (std::string((*iter)->representationNode->getName()).compare(theInstance->getName()) == 0)
     {
-      std::cout << "ERROR! representationByName=" << theInstance->getName() << " exists!"
-          << std::endl;
+      std::cout << "ERROR! representationByName=" << theInstance->getName() << " exists, and "
+          << "providedModuleName=" << (*iter)->providedModuleName << std::endl;
       exit(EXIT_FAILURE);
     }
   }
