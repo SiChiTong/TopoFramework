@@ -45,7 +45,7 @@ class Node
     bool computationNode;
 
   public:
-    Node() : index(0), initialized(false), computationNode(false) {}
+    explicit Node() : index(0), initialized(false), computationNode(false) {}
     virtual ~Node() {}
 
     unsigned int getIndex() const { return index; }
